@@ -1,6 +1,10 @@
 package game
 
-import "fmt"
+import (
+	"fmt"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
 
 type Game struct {
 	Level  *Level
@@ -8,16 +12,27 @@ type Game struct {
 	Ghosts []*Ghost
 }
 
+type Renderer interface {
+	Render()
+}
+
 func New() *Game {
-    return &Game{
-        Level:  LoadLevel(),
-        Player: NewPlayer(),
-        Ghosts: []*Ghost{NewGhost()},
-    }
+	return &Game{
+		Level:  LoadLevel(),
+		Player: NewPlayer(),
+		Ghosts: []*Ghost{NewGhost()},
+	}
 }
 
 func (g *Game) Run() {
-	fmt.Println("Game running")
+	rl.InitWindow(800, 450, "raylib [core] example - basic window")
+	defer rl.CloseWindow()
+
+	rl.SetTargetFPS(60)
+
+	for !rl.WindowShouldClose() {
+		g.Render()
+	}
 }
 
 func (g *Game) Close() {
