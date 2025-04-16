@@ -7,9 +7,9 @@ import (
 )
 
 type Game struct {
-	Level  *Level
-	Player *Player
-	Ghosts []*Ghost
+	level  *Level
+	player *Player
+	ghosts []*Ghost
 }
 
 type Renderer interface {
@@ -18,9 +18,9 @@ type Renderer interface {
 
 func New() *Game {
 	return &Game{
-		Level:  LoadLevel(),
-		Player: NewPlayer(),
-		Ghosts: []*Ghost{NewGhost()},
+		level:  LoadLevel(),
+		player: NewPlayer(),
+		ghosts: []*Ghost{NewGhost()},
 	}
 }
 

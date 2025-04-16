@@ -1,21 +1,36 @@
 package game
 
 type Level struct {
-	Grid [][]uint8
+	grid [][]uint8
 }
+
+type Side uint8
+
+const (
+	None  = 0
+	Right = 1 << iota
+	Left
+	Up
+	Down
+	All = Right | Left | Up | Down
+)
 
 func LoadLevel() *Level {
 	l := new(Level)
-	l.Grid = make([][]uint8, 28)
-	for i := range l.Grid {
-		l.Grid[i] = make([]uint8, 36)
-	}
+	l.grid = make([][]uint8, 28)
 
-	//totally arbitrary testing
-	for i := range l.Grid {
-		for j := range l.Grid[i] {
-			if i == j {
-				l.Grid[i][j] = 1
+	for i := range l.grid {
+		l.grid[i] = make([]uint8, 36)
+		for j := range l.grid[i] {
+			//totally arbitrary setup
+			switch {
+			case i == j:
+				l.grid[i][j] = All
+			case i == 0:
+				l.grid[i][j] = Right | Left
+			case j == 0:
+				l.grid[i][j] = Up | Left
+
 			}
 		}
 	}
