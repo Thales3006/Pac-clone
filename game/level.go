@@ -4,8 +4,6 @@ type Level struct {
 	grid [][]uint8
 }
 
-type Side uint8
-
 const (
 	None  = 0
 	Right = 1 << iota
