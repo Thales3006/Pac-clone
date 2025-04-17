@@ -1,9 +1,9 @@
 package main
 
-import "pac-clone/game"
+import "pac-clone/internal/game"
 
 func main() {
-	myGame := game.New()
+	myGame := game.NewGame()
 	myGame.Run()
 	myGame.Close()
 }

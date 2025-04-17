@@ -1,22 +1,51 @@
-package game
+package level
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func (g *Game) Render() {
-	rl.BeginDrawing()
-	defer rl.EndDrawing()
+type Level struct {
+	Grid [][]Side
+}
 
-	g.level.Render()
+type Side uint8
 
+const (
+	None  Side = 0
+	Right Side = 1 << iota
+	Left
+	Up
+	Down
+	All = Right | Left | Up | Down
+)
+
+func LoadLevel() *Level {
+	l := new(Level)
+	l.Grid = make([][]Side, 28)
+
+	for i := range l.Grid {
+		l.Grid[i] = make([]Side, 36)
+		for j := range l.Grid[i] {
+			//totally arbitrary setup
+			switch {
+			case i == j:
+				l.Grid[i][j] = All
+			case i == 0:
+				l.Grid[i][j] = Right | Left
+			case j == 0:
+				l.Grid[i][j] = Up | Left
+
+			}
+		}
+	}
+	return l
 }
 
 func (l *Level) Render() {
-	for i := range l.grid {
-		for j := range l.grid[i] {
+	for i := range l.Grid {
+		for j := range l.Grid[i] {
 
-			cell := l.grid[i][j]
+			cell := l.Grid[i][j]
 
 			switch cell {
 			case None:
