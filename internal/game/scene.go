@@ -1,6 +1,7 @@
 package game
 
 import (
+	gui "github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -12,16 +13,34 @@ const (
 	Level
 )
 
-func (g *Game) RenderScene() {
+func (g *Game) HandleScene() {
 	switch g.currentScene {
 	case MainMenu:
-		g.RenderMainMenu()
+		g.HandleMainMenu()
 	case Level:
-		g.level.Render()
-
+		g.HandleLevel()
 	}
 }
 
-func (g *Game) RenderMainMenu() {
-	rl.DrawRectangle(0, 0, 300, 300, rl.White)
+func (g *Game) HandleMainMenu() {
+	rl.ClearBackground(rl.RayWhite)
+
+	if gui.Button(rl.Rectangle{X: 24, Y: 84, Width: 120, Height: 30}, "Play") {
+		g.currentScene = Level
+	}
+	if gui.Button(rl.Rectangle{X: 24, Y: 124, Width: 120, Height: 30}, "Settings") {
+
+	}
+	if gui.Button(rl.Rectangle{X: 24, Y: 164, Width: 120, Height: 30}, "Exit") {
+		rl.CloseWindow()
+	}
+}
+
+func (g *Game) HandleLevel() {
+	rl.ClearBackground(rl.RayWhite)
+	g.level.Render(rl.Rectangle{X: 200, Y: 200, Width: float32(g.Width), Height: float32(g.Height)})
+
+	if rl.IsKeyDown(rl.KeyEscape) {
+		g.currentScene = MainMenu
+	}
 }
