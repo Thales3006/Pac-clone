@@ -5,7 +5,9 @@ import (
 )
 
 type Level struct {
-	Grid [][]Side
+	Grid   [][]Side
+	Width  uint8
+	Height uint8
 }
 
 type Side uint8
@@ -22,6 +24,7 @@ const (
 func LoadLevel() *Level {
 	l := new(Level)
 	l.Grid = make([][]Side, 28)
+	l.Height = uint8(len(l.Grid))
 
 	for i := range l.Grid {
 		l.Grid[i] = make([]Side, 36)
@@ -38,31 +41,51 @@ func LoadLevel() *Level {
 			}
 		}
 	}
+	l.Width = uint8(len(l.Grid[0]))
 	return l
 }
 
-func (l *Level) Render() {
+func (l *Level) Render(place rl.Rectangle) {
+	place.Width = place.Width / float32(l.Width)
+	place.Height = place.Height / float32(l.Height)
+
+	const thickness = 0.2
+
+	wall := rl.Rectangle{
+		X:      place.Width * (1 - thickness),
+		Y:      place.Height * (1 - thickness),
+		Width:  place.Width * thickness,
+		Height: place.Height * thickness,
+	}
+
+	cellRect := rl.Rectangle{
+		Width:  place.Width,
+		Height: place.Height,
+	}
+
 	for i := range l.Grid {
 		for j := range l.Grid[i] {
 
 			cell := l.Grid[i][j]
+			cellRect.X = place.X + float32(j)*place.Width
+			cellRect.Y = place.Y + float32(i)*place.Height
 
 			switch cell {
 			case None:
-				rl.DrawRectangle(int32(j*32), 100+int32(i*32), 32, 32, rl.Black)
+				rl.DrawRectangleRec(cellRect, rl.Black)
 
 			default:
 				if cell&Left == Left {
-					rl.DrawRectangle(int32(j*32), 100+int32(i*32), 4, 32, rl.Green)
+					rl.DrawRectangleRec(rl.Rectangle{X: cellRect.X, Y: cellRect.Y, Width: wall.Width, Height: cellRect.Height}, rl.Green)
 				}
 				if cell&Right == Right {
-					rl.DrawRectangle(int32(j*32)+28, 100+int32(i*32), 4, 32, rl.Orange)
+					rl.DrawRectangleRec(rl.Rectangle{X: cellRect.X + wall.X, Y: cellRect.Y, Width: wall.Width, Height: cellRect.Height}, rl.Orange)
 				}
 				if cell&Up == Up {
-					rl.DrawRectangle(int32(j*32), 100+int32(i*32), 32, 4, rl.Purple)
+					rl.DrawRectangleRec(rl.Rectangle{X: cellRect.X, Y: cellRect.Y, Width: cellRect.Width, Height: wall.Height}, rl.Purple)
 				}
 				if cell&Down == Down {
-					rl.DrawRectangle(int32(j*32), 100+int32(i*32)+28, 32, 4, rl.Gray)
+					rl.DrawRectangleRec(rl.Rectangle{X: cellRect.X, Y: cellRect.Y + wall.Y, Width: cellRect.Width, Height: wall.Height}, rl.Gray)
 				}
 			}
 		}
