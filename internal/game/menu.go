@@ -30,7 +30,13 @@ func (g *Game) HandleMainMenu() {
 		},
 	}
 
-	g.component(rl.Rectangle{X: (float32(g.Width) - 300) / 2, Y: (float32(g.Height) - 200) / 2, Width: 300, Height: 200}, elements)
+	g.component(rl.Rectangle{
+		X:      (float32(g.Width) - 300) / 2,
+		Y:      (float32(g.Height) - 200) / 2,
+		Width:  300,
+		Height: 200,
+	},
+		elements)
 }
 
 func (g *Game) HandleSelectionMenu() {
@@ -65,7 +71,7 @@ func (g *Game) HandleSelectionMenu() {
 
 	g.component(rl.Rectangle{X: (float32(g.Width) - 300) / 2, Y: (float32(g.Height) - 200) / 2, Width: 300, Height: 200}, elements)
 
-	if rl.IsKeyDown(rl.KeyEscape) {
+	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = MainMenu
 	}
 }

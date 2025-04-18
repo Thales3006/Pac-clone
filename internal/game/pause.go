@@ -36,5 +36,15 @@ func (g *Game) HandlePause() {
 		},
 	}
 
-	g.component(rl.Rectangle{X: (float32(g.Width) - 300) / 2, Y: (float32(g.Height) - 200) / 2, Width: 300, Height: 200}, elements)
+	g.component(rl.Rectangle{
+		X:      (float32(g.Width) - 300) / 2,
+		Y:      (float32(g.Height) - 200) / 2,
+		Width:  300,
+		Height: 200,
+	},
+		elements)
+
+	if rl.IsKeyPressed(rl.KeyEscape) {
+		g.currentScene = Level
+	}
 }

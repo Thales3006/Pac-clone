@@ -18,7 +18,7 @@ func NewPlayer() *Player {
 		Y:             0,
 		Height:        0.7,
 		Width:         0.7,
-		LevelUnlocked: 0,
+		LevelUnlocked: 1,
 		LevelCurrent:  0,
 	}
 }

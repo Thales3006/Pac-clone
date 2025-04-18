@@ -38,9 +38,15 @@ func (g *Game) HandleLevel() {
 		g.level,
 	}
 
-	g.component(rl.Rectangle{X: (float32(g.Width) - 800) / 2, Y: (float32(g.Height) - 800) / 2, Width: 800, Height: 800}, elements)
+	g.component(rl.Rectangle{
+		X:      (float32(g.Width) - 800) / 2,
+		Y:      (float32(g.Height) - 800) / 2,
+		Width:  800,
+		Height: 800,
+	},
+		elements)
 
-	if rl.IsKeyDown(rl.KeyEscape) {
+	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = Pause
 	}
 }

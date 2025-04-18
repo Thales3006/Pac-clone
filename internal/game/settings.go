@@ -18,9 +18,20 @@ func (g *Game) HandleSettings() {
 		},
 	}
 
-	g.component(rl.Rectangle{X: (float32(g.Width) - 300) / 2, Y: (float32(g.Height) - 200) / 2, Width: 300, Height: 200}, elements)
+	g.component(rl.Rectangle{
+		X:      (float32(g.Width) - 300) / 2,
+		Y:      (float32(g.Height) - 200) / 2,
+		Width:  300,
+		Height: 200,
+	},
+		elements)
 
-	if rl.IsKeyDown(rl.KeyEscape) {
-		g.currentScene = MainMenu
+	if rl.IsKeyPressed(rl.KeyEscape) {
+		if g.player.LevelCurrent == 0 {
+			g.currentScene = MainMenu
+		} else {
+			g.currentScene = Level
+		}
+
 	}
 }
