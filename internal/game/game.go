@@ -12,6 +12,7 @@ type Game struct {
 	player       *ent.Player
 	ghosts       []*ent.Ghost
 	currentScene Scene
+	IsRunning    bool
 	Width        int32
 	Height       int32
 }
@@ -22,6 +23,7 @@ func New() *Game {
 		player:       ent.NewPlayer(),
 		ghosts:       []*ent.Ghost{ent.NewGhost()},
 		currentScene: MainMenu,
+		IsRunning:    true,
 		Width:        int32(rl.GetScreenWidth()),
 		Height:       int32(rl.GetScreenHeight()),
 	}
@@ -36,7 +38,7 @@ func (g *Game) Run() {
 	rl.SetExitKey(rl.KeyNull)
 	rl.SetTargetFPS(60)
 
-	for !rl.WindowShouldClose() {
+	for g.IsRunning && !rl.WindowShouldClose() {
 		g.HandleFrame()
 	}
 }

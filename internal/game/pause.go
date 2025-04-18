@@ -31,7 +31,7 @@ func (g *Game) HandlePause() {
 		&ui.Button{
 			Text: "Exit",
 			OnClick: func() {
-				rl.CloseWindow()
+				g.IsRunning = false
 			},
 		},
 	}

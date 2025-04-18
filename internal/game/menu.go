@@ -25,7 +25,7 @@ func (g *Game) HandleMainMenu() {
 		&ui.Button{
 			Text: "Exit",
 			OnClick: func() {
-				rl.CloseWindow()
+				g.IsRunning = false
 			},
 		},
 	}
