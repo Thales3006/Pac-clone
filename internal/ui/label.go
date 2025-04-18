@@ -6,9 +6,9 @@ import (
 )
 
 type Label struct {
-	text string
+	Text string
 }
 
 func (l *Label) Use(bounds rl.Rectangle) {
-	gui.Label(bounds, l.text)
+	gui.Label(bounds, l.Text)
 }

@@ -6,10 +6,10 @@ import (
 )
 
 type Button struct {
-	text   string
-	action func(bool)
+	Text   string
+	Action func(bool)
 }
 
 func (b *Button) Use(bounds rl.Rectangle) {
-	b.action(gui.Button(bounds, b.text))
+	b.Action(gui.Button(bounds, b.Text))
 }
