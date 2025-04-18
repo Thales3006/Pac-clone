@@ -22,6 +22,8 @@ func (g *Game) HandleScene() {
 		g.HandleMainMenu()
 	case SelectionMenu:
 		g.HandleSelectionMenu()
+	case Pause:
+		g.HandlePause()
 	case Level:
 		g.HandleLevel()
 	case Settings:
@@ -39,6 +41,6 @@ func (g *Game) HandleLevel() {
 	g.component(rl.Rectangle{X: (float32(g.Width) - 800) / 2, Y: (float32(g.Height) - 800) / 2, Width: 800, Height: 800}, elements)
 
 	if rl.IsKeyDown(rl.KeyEscape) {
-		g.currentScene = MainMenu
+		g.currentScene = Pause
 	}
 }
