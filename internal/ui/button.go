@@ -7,9 +7,11 @@ import (
 
 type Button struct {
 	Text   string
-	Action func(bool)
+	Action func()
 }
 
 func (b *Button) Use(bounds rl.Rectangle) {
-	b.Action(gui.Button(bounds, b.Text))
+	if gui.Button(bounds, b.Text) {
+		b.Action()
+	}
 }
