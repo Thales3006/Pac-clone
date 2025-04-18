@@ -6,12 +6,12 @@ import (
 )
 
 type Button struct {
-	Text   string
-	Action func()
+	Text    string
+	OnClick func()
 }
 
 func (b *Button) Use(bounds rl.Rectangle) {
 	if gui.Button(bounds, b.Text) {
-		b.Action()
+		b.OnClick()
 	}
 }

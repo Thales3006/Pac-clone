@@ -30,19 +30,19 @@ func (g *Game) HandleMainMenu() {
 	elements := []ui.Element{
 		&ui.Button{
 			Text: "Play",
-			Action: func() {
+			OnClick: func() {
 				g.currentScene = Level
 			},
 		},
 		&ui.Button{
 			Text: "Settings",
-			Action: func() {
+			OnClick: func() {
 				fmt.Print("aaaa")
 			},
 		},
 		&ui.Button{
 			Text: "Exit",
-			Action: func() {
+			OnClick: func() {
 				rl.CloseWindow()
 			},
 		},
