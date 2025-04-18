@@ -1,7 +1,9 @@
 package game
 
 import (
-	gui "github.com/gen2brain/raylib-go/raygui"
+	"fmt"
+	"pac-clone/internal/ui"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -25,15 +27,28 @@ func (g *Game) HandleScene() {
 func (g *Game) HandleMainMenu() {
 	rl.ClearBackground(rl.RayWhite)
 
-	if gui.Button(rl.Rectangle{X: 24, Y: 84, Width: 120, Height: 30}, "Play") {
-		g.currentScene = Level
+	elements := []ui.Element{
+		&ui.Button{
+			Text: "Play",
+			Action: func() {
+				g.currentScene = Level
+			},
+		},
+		&ui.Button{
+			Text: "Settings",
+			Action: func() {
+				fmt.Print("aaaa")
+			},
+		},
+		&ui.Button{
+			Text: "Exit",
+			Action: func() {
+				rl.CloseWindow()
+			},
+		},
 	}
-	if gui.Button(rl.Rectangle{X: 24, Y: 124, Width: 120, Height: 30}, "Settings") {
 
-	}
-	if gui.Button(rl.Rectangle{X: 24, Y: 164, Width: 120, Height: 30}, "Exit") {
-		rl.CloseWindow()
-	}
+	g.component(rl.Rectangle{X: (float32(g.Width) - 300) / 2, Y: (float32(g.Height) - 200) / 2, Width: 300, Height: 200}, elements)
 }
 
 func (g *Game) HandleLevel() {
