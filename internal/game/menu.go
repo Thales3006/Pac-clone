@@ -10,6 +10,9 @@ func (g *Game) HandleMainMenu() {
 	rl.ClearBackground(rl.RayWhite)
 
 	elements := []ui.Element{
+		&ui.Label{
+			Text: "Main Menu",
+		},
 		&ui.Button{
 			Text: "Play",
 			OnClick: func() {

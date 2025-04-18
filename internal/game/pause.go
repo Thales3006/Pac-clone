@@ -10,6 +10,9 @@ func (g *Game) HandlePause() {
 	rl.ClearBackground(rl.RayWhite)
 
 	elements := []ui.Element{
+		&ui.Label{
+			Text: "Pause",
+		},
 		&ui.Button{
 			Text: "Continue",
 			OnClick: func() {
