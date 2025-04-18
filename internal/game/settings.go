@@ -30,7 +30,7 @@ func (g *Game) HandleSettings() {
 		if g.player.LevelCurrent == 0 {
 			g.currentScene = MainMenu
 		} else {
-			g.currentScene = Level
+			g.currentScene = Pause
 		}
 
 	}
