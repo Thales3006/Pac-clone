@@ -6,23 +6,17 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func (g *Game) HandlePause() {
+func (g *Game) HandleMainMenu() {
 	rl.ClearBackground(rl.RayWhite)
 
-	pause := ui.NewComponent([]ui.Element{
+	mainMenu := ui.NewComponent([]ui.Element{
 		&ui.Label{
-			Text: "Pause",
-		},
-		&ui.Button{
-			Text: "Continue",
-			OnClick: func() {
-				g.currentScene = Level
-			},
-		},
-		&ui.Button{
 			Text: "Main Menu",
+		},
+		&ui.Button{
+			Text: "Play",
 			OnClick: func() {
-				g.currentScene = MainMenu
+				g.currentScene = SelectionMenu
 			},
 		},
 		&ui.Button{
@@ -39,14 +33,10 @@ func (g *Game) HandlePause() {
 		},
 	})
 
-	pause.Use(rl.Rectangle{
+	mainMenu.Use(rl.Rectangle{
 		X:      (float32(g.Width) - 300) / 2,
 		Y:      (float32(g.Height) - 200) / 2,
 		Width:  300,
 		Height: 200,
 	})
-
-	if rl.IsKeyPressed(rl.KeyEscape) {
-		g.currentScene = Level
-	}
 }

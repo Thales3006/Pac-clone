@@ -34,17 +34,16 @@ func (g *Game) HandleScene() {
 func (g *Game) HandleLevel() {
 	rl.ClearBackground(rl.RayWhite)
 
-	elements := []ui.Element{
+	levelScene := ui.NewComponent([]ui.Element{
 		g.level,
-	}
+	})
 
-	g.component(rl.Rectangle{
+	levelScene.Use(rl.Rectangle{
 		X:      (float32(g.Width) - 800) / 2,
 		Y:      (float32(g.Height) - 800) / 2,
 		Width:  800,
 		Height: 800,
-	},
-		elements)
+	})
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = Pause
