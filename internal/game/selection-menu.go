@@ -16,21 +16,21 @@ func (g *Game) HandleSelectionMenu() {
 		&ui.Button{
 			Text: "1",
 			OnClick: func() {
-				g.player.LevelCurrent = 1
+				g.LevelCurrent = 1
 				g.currentScene = Level
 			},
 		},
 		&ui.Button{
 			Text: "2",
 			OnClick: func() {
-				g.player.LevelCurrent = 2
+				g.LevelCurrent = 2
 				g.currentScene = Level
 			},
 		},
 		&ui.Button{
 			Text: "3",
 			OnClick: func() {
-				g.player.LevelCurrent = 3
+				g.LevelCurrent = 3
 				g.currentScene = Level
 			},
 		},
