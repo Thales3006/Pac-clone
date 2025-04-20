@@ -4,6 +4,8 @@ import (
 	ent "pac-clone/internal/entities"
 	lvl "pac-clone/internal/level"
 
+	mv "pac-clone/internal/movement"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -15,7 +17,7 @@ type Game struct {
 	isRunning    bool
 	Width        int32
 	Height       int32
-	Control      map[Key]int32
+	Control      *mv.Control
 }
 
 func New() *Game {
@@ -27,7 +29,7 @@ func New() *Game {
 		isRunning:    true,
 		Width:        int32(rl.GetScreenWidth()),
 		Height:       int32(rl.GetScreenHeight()),
-		Control:      newControl(),
+		Control:      mv.NewControl(),
 	}
 }
 

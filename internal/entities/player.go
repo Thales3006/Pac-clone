@@ -1,24 +1,23 @@
 package entities
 
-type Player struct {
-	Health uint8
-	X      float32
-	Y      float32
-	Height float32
-	Width  float32
-	Vel    float32
+import rl "github.com/gen2brain/raylib-go/raylib"
 
-	LevelUnlocked int16
-	LevelCurrent  int16
+type Player struct {
+	Entity
+	Health uint8
 }
 
 func NewPlayer() *Player {
 	return &Player{
+		Entity: Entity{
+			Rectangle: rl.Rectangle{
+				X:      2,
+				Y:      15,
+				Width:  0.5,
+				Height: 0.5,
+			},
+			Speed: 0.1,
+		},
 		Health: 5,
-		X:      5,
-		Y:      10,
-		Height: 1,
-		Width:  1,
-		Vel:    0.1,
 	}
 }
