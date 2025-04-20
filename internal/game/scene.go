@@ -1,10 +1,6 @@
 package game
 
-import (
-	"pac-clone/internal/ui"
-
-	rl "github.com/gen2brain/raylib-go/raylib"
-)
+import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Scene uint8
 
@@ -34,18 +30,17 @@ func (g *Game) HandleScene() {
 func (g *Game) HandleLevel() {
 	rl.ClearBackground(rl.RayWhite)
 
-	levelScene := ui.NewComponent([]ui.Element{
-		g.level,
-	})
-
-	levelScene.Use(rl.Rectangle{
+	g.Level.Draw(rl.Rectangle{
 		X:      (float32(g.Width) - 800) / 2,
 		Y:      (float32(g.Height) - 800) / 2,
 		Width:  800,
 		Height: 800,
-	})
+	},
+		g.Player)
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = Pause
 	}
+
+	g.Movement()
 }

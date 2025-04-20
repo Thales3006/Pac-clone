@@ -8,24 +8,26 @@ import (
 )
 
 type Game struct {
-	level        *lvl.Level
-	player       *ent.Player
-	ghosts       []*ent.Ghost
+	Level        *lvl.Level
+	Player       *ent.Player
+	Ghosts       []*ent.Ghost
 	currentScene Scene
-	IsRunning    bool
+	isRunning    bool
 	Width        int32
 	Height       int32
+	Control      map[Key]int32
 }
 
 func New() *Game {
 	return &Game{
-		level:        lvl.LoadLevel(),
-		player:       ent.NewPlayer(),
-		ghosts:       []*ent.Ghost{ent.NewGhost()},
+		Level:        lvl.LoadLevel(),
+		Player:       ent.NewPlayer(),
+		Ghosts:       []*ent.Ghost{ent.NewGhost()},
 		currentScene: MainMenu,
-		IsRunning:    true,
+		isRunning:    true,
 		Width:        int32(rl.GetScreenWidth()),
 		Height:       int32(rl.GetScreenHeight()),
+		Control:      newControl(),
 	}
 }
 
@@ -38,7 +40,7 @@ func (g *Game) Run() {
 	rl.SetExitKey(rl.KeyNull)
 	rl.SetTargetFPS(60)
 
-	for g.IsRunning && !rl.WindowShouldClose() {
+	for g.isRunning && !rl.WindowShouldClose() {
 		g.HandleFrame()
 	}
 }

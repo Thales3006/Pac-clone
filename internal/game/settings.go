@@ -26,7 +26,7 @@ func (g *Game) HandleSettings() {
 	})
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
-		if g.level.Current == 0 {
+		if g.Level.Current == 0 {
 			g.currentScene = MainMenu
 		} else {
 			g.currentScene = Pause

@@ -34,7 +34,7 @@ func (g *Game) HandlePause() {
 		&ui.Button{
 			Text: "Exit",
 			OnClick: func() {
-				g.IsRunning = false
+				g.isRunning = false
 			},
 		},
 	})

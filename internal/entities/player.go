@@ -14,9 +14,9 @@ type Player struct {
 func NewPlayer() *Player {
 	return &Player{
 		Health: 5,
-		X:      0,
-		Y:      0,
-		Height: 0.7,
-		Width:  0.7,
+		X:      5,
+		Y:      10,
+		Height: 0.6,
+		Width:  0.6,
 	}
 }
