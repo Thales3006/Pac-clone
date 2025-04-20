@@ -1,7 +1,5 @@
 package game
 
-import rl "github.com/gen2brain/raylib-go/raylib"
-
 type Scene uint8
 
 const (
@@ -25,22 +23,4 @@ func (g *Game) HandleScene() {
 	case Settings:
 		g.HandleSettings()
 	}
-}
-
-func (g *Game) HandleLevel() {
-	rl.ClearBackground(rl.RayWhite)
-
-	g.Level.Draw(rl.Rectangle{
-		X:      (float32(g.Width) - 800) / 2,
-		Y:      (float32(g.Height) - 800) / 2,
-		Width:  800,
-		Height: 800,
-	},
-		g.Player)
-
-	if rl.IsKeyPressed(rl.KeyEscape) {
-		g.currentScene = Pause
-	}
-
-	g.Movement()
 }
