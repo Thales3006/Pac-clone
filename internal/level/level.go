@@ -5,9 +5,11 @@ import (
 )
 
 type Level struct {
-	Grid   [][]Side
-	Width  uint8
-	Height uint8
+	Grid     [][]Side
+	Width    uint8
+	Height   uint8
+	Unlocked uint8
+	Current  uint8
 }
 
 type Side uint8
@@ -23,6 +25,8 @@ const (
 
 func LoadLevel() *Level {
 	l := new(Level)
+	l.Current = 0
+	l.Unlocked = 1
 	l.Grid = make([][]Side, 20)
 	l.Height = uint8(len(l.Grid))
 

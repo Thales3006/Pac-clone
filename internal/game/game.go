@@ -8,28 +8,24 @@ import (
 )
 
 type Game struct {
-	level         *lvl.Level
-	player        *ent.Player
-	ghosts        []*ent.Ghost
-	currentScene  Scene
-	IsRunning     bool
-	Width         int32
-	Height        int32
-	LevelUnlocked uint8
-	LevelCurrent  uint8
+	level        *lvl.Level
+	player       *ent.Player
+	ghosts       []*ent.Ghost
+	currentScene Scene
+	IsRunning    bool
+	Width        int32
+	Height       int32
 }
 
 func New() *Game {
 	return &Game{
-		level:         lvl.LoadLevel(),
-		player:        ent.NewPlayer(),
-		ghosts:        []*ent.Ghost{ent.NewGhost()},
-		currentScene:  MainMenu,
-		IsRunning:     true,
-		Width:         int32(rl.GetScreenWidth()),
-		Height:        int32(rl.GetScreenHeight()),
-		LevelUnlocked: 1,
-		LevelCurrent:  0,
+		level:        lvl.LoadLevel(),
+		player:       ent.NewPlayer(),
+		ghosts:       []*ent.Ghost{ent.NewGhost()},
+		currentScene: MainMenu,
+		IsRunning:    true,
+		Width:        int32(rl.GetScreenWidth()),
+		Height:       int32(rl.GetScreenHeight()),
 	}
 }
 
