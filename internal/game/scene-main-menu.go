@@ -20,6 +20,12 @@ func (g *Game) HandleMainMenu() {
 			},
 		},
 		&ui.Button{
+			Text: "Editor",
+			OnClick: func() {
+				g.currentScene = Editor
+			},
+		},
+		&ui.Button{
 			Text: "Settings",
 			OnClick: func() {
 				g.currentScene = Settings
@@ -35,8 +41,8 @@ func (g *Game) HandleMainMenu() {
 
 	mainMenu.Use(rl.Rectangle{
 		X:      (float32(g.Width) - 300) / 2,
-		Y:      (float32(g.Height) - 200) / 2,
+		Y:      (float32(g.Height) - 300) / 2,
 		Width:  300,
-		Height: 200,
+		Height: 300,
 	})
 }

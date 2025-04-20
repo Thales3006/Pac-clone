@@ -11,6 +11,8 @@ import (
 func (g *Game) HandleLevel() {
 	rl.ClearBackground(rl.RayWhite)
 
+	deltaTime := rl.GetFrameTime()
+
 	Draw(rl.Rectangle{
 		X:      (float32(g.Width) - 800) / 2,
 		Y:      (float32(g.Height) - 800) / 2,
@@ -24,8 +26,7 @@ func (g *Game) HandleLevel() {
 		g.currentScene = Pause
 	}
 
-	mv.HandleInput(g.Control, g.Player, g.Level)
-	mv.UpdateEntity(&g.Player.Entity, g.Level, 1)
+	mv.UpdateEntity(&g.Player.Entity, g.Level, mv.HandleInput(g.Control, g.Player, g.Level, deltaTime), deltaTime)
 }
 
 func Draw(bounds rl.Rectangle, l *level.Level, p *entities.Player) {

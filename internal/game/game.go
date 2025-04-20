@@ -22,7 +22,7 @@ type Game struct {
 
 func New() *Game {
 	return &Game{
-		Level:        lvl.LoadLevel(),
+		Level:        lvl.NewLevel(),
 		Player:       ent.NewPlayer(),
 		Ghosts:       []*ent.Ghost{ent.NewGhost()},
 		currentScene: MainMenu,

@@ -8,6 +8,7 @@ const (
 	Pause
 	Settings
 	Level
+	Editor
 )
 
 func (g *Game) HandleScene() {
@@ -22,5 +23,7 @@ func (g *Game) HandleScene() {
 		g.HandleLevel()
 	case Settings:
 		g.HandleSettings()
+	case Editor:
+		g.HandleEditor()
 	}
 }
