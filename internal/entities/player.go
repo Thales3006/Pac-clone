@@ -11,8 +11,8 @@ func NewPlayer() *Player {
 	return &Player{
 		Entity: Entity{
 			Rectangle: rl.Rectangle{
-				X:      2,
-				Y:      15,
+				X:      1,
+				Y:      1,
 				Width:  0.5,
 				Height: 0.5,
 			},

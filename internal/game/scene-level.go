@@ -11,7 +11,21 @@ import (
 func (g *Game) HandleLevel() {
 	rl.ClearBackground(rl.RayWhite)
 
-	deltaTime := rl.GetFrameTime()
+	if !g.Level.Loaded && g.Level.Current != "" {
+		if g.Level.Load() != nil {
+			g.currentScene = SelectionMenu
+			return
+		} else {
+			for i := range g.Level.Grid {
+				for j, cell := range g.Level.Grid[0] {
+					if cell != level.Wall {
+						g.Player.Y = float32(i)
+						g.Player.X = float32(j)
+					}
+				}
+			}
+		}
+	}
 
 	Draw(rl.Rectangle{
 		X:      (float32(g.Width) - 800) / 2,
@@ -22,11 +36,12 @@ func (g *Game) HandleLevel() {
 		g.Level,
 		g.Player)
 
+	deltaTime := rl.GetFrameTime()
+	mv.UpdateEntity(&g.Player.Entity, g.Level, mv.HandleInput(g.Control, g.Player, g.Level, deltaTime), deltaTime)
+
 	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = Pause
 	}
-
-	mv.UpdateEntity(&g.Player.Entity, g.Level, mv.HandleInput(g.Control, g.Player, g.Level, deltaTime), deltaTime)
 }
 
 func Draw(bounds rl.Rectangle, l *level.Level, p *entities.Player) {
