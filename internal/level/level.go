@@ -24,29 +24,31 @@ const (
 )
 
 func LoadLevel() *Level {
-	l := new(Level)
-	l.Current = 0
-	l.Unlocked = 1
-	l.Grid = make([][]Side, 20)
-	l.Height = uint8(len(l.Grid))
+	grid := make([][]Side, 20)
 
-	for i := range l.Grid {
-		l.Grid[i] = make([]Side, 20)
-		for j := range l.Grid[i] {
+	for i := range grid {
+		grid[i] = make([]Side, 20)
+		for j := range grid[i] {
 			//totally arbitrary setup
 			switch {
 			case i == j:
-				l.Grid[i][j] = All
+				grid[i][j] = All
 			case i == 0:
-				l.Grid[i][j] = Right | Left
+				grid[i][j] = Right | Left
 			case j == 0:
-				l.Grid[i][j] = Up | Left
+				grid[i][j] = Up | Left
 
 			}
 		}
 	}
-	l.Width = uint8(len(l.Grid[0]))
-	return l
+
+	return &Level{
+		Grid:     grid,
+		Width:    uint8(len(grid[0])),
+		Height:   uint8(len(grid)),
+		Unlocked: 1,
+		Current:  0,
+	}
 }
 
 func (l *Level) Use(place rl.Rectangle) {
