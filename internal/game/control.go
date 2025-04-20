@@ -28,15 +28,15 @@ func (g *Game) Movement() {
 	cell := g.Level.Grid[int32(g.Player.Y)][int32(g.Player.X)]
 
 	if rl.IsKeyDown(g.Control[KeyRight]) && cell&level.Right != level.Right {
-		g.Player.X += 0.1
+		g.Player.X += g.Player.Vel
 	}
 	if rl.IsKeyDown(g.Control[KeyLeft]) && cell&level.Left != level.Left {
-		g.Player.X -= 0.1
+		g.Player.X -= g.Player.Vel
 	}
 	if rl.IsKeyDown(g.Control[KeyUp]) && cell&level.Up != level.Up {
-		g.Player.Y += 0.1
+		g.Player.Y += g.Player.Vel
 	}
 	if rl.IsKeyDown(g.Control[KeyDown]) && cell&level.Down != level.Down {
-		g.Player.Y -= 0.1
+		g.Player.Y -= g.Player.Vel
 	}
 }
