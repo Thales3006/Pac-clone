@@ -1,5 +1,11 @@
 package level
 
+import (
+	"encoding/json"
+	"io/ioutil"
+	"os"
+)
+
 type Level struct {
 	Grid     [][]Side
 	Width    uint8
@@ -16,7 +22,28 @@ const (
 	Door
 )
 
-func LoadLevel() *Level {
+func LoadLevel(path string) (*Level, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	var level Level
+	err = json.Unmarshal(bytes, &level)
+	if err != nil {
+		return nil, err
+	}
+
+	return &level, nil
+}
+
+func NewLevel() *Level {
 	grid := make([][]Side, 20)
 
 	for i := range grid {

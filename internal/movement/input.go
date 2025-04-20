@@ -7,26 +7,23 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func HandleInput(c *Control, p *ent.Player, l *level.Level) {
-	if !isCenteredOnTile(&p.Entity) {
-		return
-	}
-
+func HandleInput(c *Control, p *ent.Player, l *level.Level, delta float32) ent.Direction {
 	Right := rl.IsKeyDown(c.bind[KeyRight])
 	Left := rl.IsKeyDown(c.bind[KeyLeft])
 	Up := rl.IsKeyDown(c.bind[KeyUp])
 	Down := rl.IsKeyDown(c.bind[KeyDown])
 
 	if Right && !Left && !Up && !Down {
-		p.Direction = ent.Right
+		return ent.Right
 	}
 	if !Right && Left && !Up && !Down {
-		p.Direction = ent.Left
+		return ent.Left
 	}
 	if !Right && !Left && Up && !Down {
-		p.Direction = ent.Up
+		return ent.Up
 	}
 	if !Right && !Left && !Up && Down {
-		p.Direction = ent.Down
+		return ent.Down
 	}
+	return p.Direction
 }
