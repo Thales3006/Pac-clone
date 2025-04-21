@@ -11,20 +11,8 @@ import (
 func (g *Game) HandleLevel() {
 	rl.ClearBackground(rl.RayWhite)
 
-	if !g.Level.Loaded && g.Level.Current != "" {
-		if g.Level.Load() != nil {
-			g.currentScene = SelectionMenu
-			return
-		} else {
-			for i := range g.Level.Grid {
-				for j, cell := range g.Level.Grid[0] {
-					if cell != level.Wall {
-						g.Player.Y = float32(i)
-						g.Player.X = float32(j)
-					}
-				}
-			}
-		}
+	if g.Level.Current == "" {
+		g.Level.LoadDefault()
 	}
 
 	Draw(rl.Rectangle{
@@ -37,7 +25,8 @@ func (g *Game) HandleLevel() {
 		g.Player)
 
 	deltaTime := rl.GetFrameTime()
-	mv.UpdateEntity(&g.Player.Entity, g.Level, mv.HandleInput(g.Control, g.Player, g.Level, deltaTime), deltaTime)
+	mv.UpdateEntity(&g.Player.Entity, g.Level, mv.HandleInput(g.Control, g.Player, g.Level), deltaTime)
+	mv.UpdateLevel(g.Level, &g.Player.Entity)
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = Pause
@@ -56,17 +45,25 @@ func Draw(bounds rl.Rectangle, l *level.Level, p *entities.Player) {
 		for j, cell := range l.Grid[i] {
 
 			cellRect.X = bounds.X + float32(j)*cellRect.Width
-			cellRect.Y = bounds.Y + float32(int(l.Height-1)-i)*cellRect.Height
+			cellRect.Y = bounds.Y + float32(i)*cellRect.Height
 
-			if cell == level.Wall {
+			switch cell {
+			case level.Wall:
 				rl.DrawRectangleRec(cellRect, rl.Blue)
+			case level.Point:
+				rl.DrawRectangle(
+					int32(cellRect.X+0.3*cellRect.Width),
+					int32(cellRect.Y+0.3*cellRect.Height),
+					int32(0.3*cellRect.Width),
+					int32(0.3*cellRect.Height),
+					rl.White)
 			}
 		}
 	}
 
 	rl.DrawRectangleRec(rl.Rectangle{
-		X:      bounds.X + cellRect.Width*p.X,
-		Y:      bounds.Y + cellRect.Height*(float32(l.Height)-(p.Y+p.Height)),
+		X:      bounds.X + cellRect.Width*(p.X+(1-p.Width)/2),
+		Y:      bounds.Y + cellRect.Height*(p.Y+(1-p.Height)/2),
 		Width:  cellRect.Width * p.Width,
 		Height: cellRect.Height * p.Height,
 	},

@@ -9,8 +9,8 @@ import (
 
 var dirVectors = map[ent.Direction]rl.Vector2{
 	ent.None:  {X: 0, Y: 0},
-	ent.Up:    {X: 0, Y: 1},
-	ent.Down:  {X: 0, Y: -1},
+	ent.Up:    {X: 0, Y: -1},
+	ent.Down:  {X: 0, Y: 1},
 	ent.Left:  {X: -1, Y: 0},
 	ent.Right: {X: 1, Y: 0},
 }
@@ -25,36 +25,48 @@ func UpdateEntity(e *ent.Entity, l *level.Level, newDir ent.Direction, delta flo
 		return
 	}
 
-	if !canMove(e, l, delta) {
+	if willPassCenter(e, delta) && e.Direction != newDir {
+
+		if e.Direction == ent.Right || e.Direction == ent.Left {
+			temp := deltaInt(e.X, dir.X)
+			e.X = float32(int32(e.X)) + (dir.X+1)/2
+			if canMove(e, l, newDir, delta) {
+				e.Y += ndir.Y * (e.Speed*delta - temp)
+				e.Direction = newDir
+			}
+		} else {
+			temp := deltaInt(e.Y, dir.Y)
+			e.Y = float32(int32(e.Y)) + (dir.Y+1)/2
+			if canMove(e, l, newDir, delta) {
+				e.X += ndir.X * (e.Speed*delta - temp)
+				e.Direction = newDir
+			}
+		}
+		return
+	}
+
+	if !canMove(e, l, e.Direction, delta) {
 		e.Direction = ent.None
 		e.X = float32(int32(e.X))
 		e.Y = float32(int32(e.Y))
 		return
 	}
 
-	if willPassCenter(e, delta) && e.Direction != newDir {
-
-		if e.Direction == ent.Right || e.Direction == ent.Left {
-			temp := deltaInt(e.X, dir.X)
-			e.X = float32(int32(e.X)) + (dir.X+1)/2
-			if canMove(e, l, delta) {
-				e.Y += ndir.Y * (e.Speed*delta - temp)
-			}
-
-		} else {
-			temp := deltaInt(e.Y, dir.Y)
-			e.Y = float32(int32(e.Y)) + (dir.Y+1)/2
-			if canMove(e, l, delta) {
-				e.X += ndir.X * (e.Speed*delta - temp)
-			}
-
-		}
-		e.Direction = newDir
-		return
-	}
-
 	e.X += dir.X * e.Speed * delta
 	e.Y += dir.Y * e.Speed * delta
+
+	if e.X >= float32(l.Width) {
+		e.X = 0
+	}
+	if e.Y >= float32(l.Height) {
+		e.Y = 0
+	}
+	if e.X < 0 {
+		e.X = float32(l.Width) - 1
+	}
+	if e.Y < 0 {
+		e.Y = float32(l.Height) - 1
+	}
 
 }
 
@@ -81,22 +93,22 @@ func containsCenter(f, D float32) bool {
 	return end > begin
 }
 
-func canMove(e *ent.Entity, l *level.Level, delta float32) bool {
-	if e.Direction == ent.None {
+func canMove(e *ent.Entity, l *level.Level, dir ent.Direction, delta float32) bool {
+	if dir == ent.None {
 		return false
 	}
 
-	offset := dirVectors[e.Direction]
+	offset := dirVectors[dir]
 
 	nextX := uint8(e.X + offset.X*e.Speed*delta)
 	nextY := uint8(e.Y + offset.Y*e.Speed*delta)
 
-	nextXs := uint8(e.X + 0.9 + offset.X*e.Speed*delta)
-	nextYs := uint8(e.Y + 0.9 + offset.Y*e.Speed*delta)
+	nextXs := uint8(e.X + 0.99 + offset.X*e.Speed*delta)
+	nextYs := uint8(e.Y + 0.99 + offset.Y*e.Speed*delta)
 
 	if nextX >= l.Width || nextY >= l.Height || nextXs >= l.Width || nextYs >= l.Height {
-		return false
+		return true
 	}
-	return l.Grid[nextX][nextY] == level.Empty && l.Grid[nextXs][nextYs] == level.Empty
+	return l.Grid[nextY][nextX] != level.Wall && l.Grid[nextYs][nextXs] != level.Wall
 
 }
