@@ -30,7 +30,8 @@ func (g *Game) HandleLevel() {
 		g.Player)
 
 	deltaTime := rl.GetFrameTime()
-	mv.UpdateEntity(&g.Player.Entity, g.Level, mv.HandleInput(g.Control, g.Player, g.Level), deltaTime)
+	mv.HandleInput(g.Control, g.Player, g.Level)
+	mv.UpdateEntity(&g.Player.Entity, g.Level, deltaTime)
 	mv.UpdateLevel(g.Level, &g.Player.Entity)
 
 	if rl.IsKeyPressed(rl.KeyEscape) {

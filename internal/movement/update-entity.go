@@ -15,31 +15,31 @@ var dirVectors = map[ent.Direction]rl.Vector2{
 	ent.Right: {X: 1, Y: 0},
 }
 
-func UpdateEntity(e *ent.Entity, l *level.Level, newDir ent.Direction, delta float32) {
+func UpdateEntity(e *ent.Entity, l *level.Level, delta float32) {
 
 	dir := dirVectors[e.Direction]
-	ndir := dirVectors[newDir]
+	ndir := dirVectors[e.DesiredDir]
 
 	if e.Direction == ent.None {
-		e.Direction = newDir
+		e.Direction = e.DesiredDir
 		return
 	}
 
-	if willPassCenter(e, delta) && e.Direction != newDir {
+	if willPassCenter(e, delta) && e.Direction != e.DesiredDir {
 
 		if e.Direction == ent.Right || e.Direction == ent.Left {
 			temp := deltaInt(e.X, dir.X)
 			e.X = float32(int32(e.X)) + (dir.X+1)/2
-			if canMove(e, l, newDir, delta) {
+			if canMove(e, l, e.DesiredDir, delta) {
 				e.Y += ndir.Y * (e.Speed*delta - temp)
-				e.Direction = newDir
+				e.Direction = e.DesiredDir
 			}
 		} else {
 			temp := deltaInt(e.Y, dir.Y)
 			e.Y = float32(int32(e.Y)) + (dir.Y+1)/2
-			if canMove(e, l, newDir, delta) {
+			if canMove(e, l, e.DesiredDir, delta) {
 				e.X += ndir.X * (e.Speed*delta - temp)
-				e.Direction = newDir
+				e.Direction = e.DesiredDir
 			}
 		}
 		return

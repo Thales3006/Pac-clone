@@ -14,6 +14,7 @@ const (
 
 type Entity struct {
 	rl.Rectangle
-	Speed     float32
-	Direction Direction
+	Speed      float32
+	Direction  Direction
+	DesiredDir Direction
 }
