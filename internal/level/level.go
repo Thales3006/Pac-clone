@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+
+	"github.com/dominikbraun/graph"
 )
 
 type Level struct {
@@ -11,6 +13,7 @@ type Level struct {
 	Width   uint8
 	Height  uint8
 	Current string
+	Graph   graph.Graph[[2]uint8, Cell]
 }
 
 type Side uint8
@@ -52,6 +55,8 @@ func (l *Level) Load(path string) error {
 	l.Height = uint8(len(l.Grid))
 	l.Current = path
 
+	l.generateGraph()
+
 	return nil
 }
 
@@ -60,4 +65,5 @@ func (l *Level) Unload() {
 	l.Width = 0
 	l.Height = 0
 	l.Current = ""
+	l.Graph = nil
 }
