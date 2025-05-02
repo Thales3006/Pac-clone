@@ -7,11 +7,10 @@ import (
 )
 
 type Level struct {
-	Grid     [][]Side
-	Width    uint8
-	Height   uint8
-	Unlocked uint8
-	Current  string
+	Grid    [][]Side
+	Width   uint8
+	Height  uint8
+	Current string
 }
 
 type Side uint8
@@ -25,19 +24,15 @@ const (
 
 func NewLevel() *Level {
 	return &Level{
-		Grid:     nil,
-		Width:    0,
-		Height:   0,
-		Unlocked: 1,
-		Current:  "",
+		Grid:    nil,
+		Width:   0,
+		Height:  0,
+		Current: "",
 	}
 }
 
 func (l *Level) Load(path string) error {
-	if l.Current != "" {
-		return nil
-	}
-	file, err := os.Open(path)
+	file, err := os.Open("levels/" + path)
 	if err != nil {
 		return err
 	}
@@ -47,12 +42,16 @@ func (l *Level) Load(path string) error {
 	if err != nil {
 		return err
 	}
+
 	err = json.Unmarshal(bytes, l)
 	if err != nil {
 		return err
 	}
 
+	l.Width = uint8(len(l.Grid[3]))
+	l.Height = uint8(len(l.Grid))
 	l.Current = path
+
 	return nil
 }
 
@@ -60,6 +59,5 @@ func (l *Level) Unload() {
 	l.Grid = nil
 	l.Width = 0
 	l.Height = 0
-	l.Unlocked = 1
 	l.Current = ""
 }

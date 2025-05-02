@@ -10,14 +10,15 @@ import (
 )
 
 type Game struct {
-	Level        *lvl.Level
-	Player       *ent.Player
-	Ghosts       []*ent.Ghost
-	currentScene Scene
-	isRunning    bool
-	Width        int32
-	Height       int32
-	Control      *mv.Control
+	Level         *lvl.Level
+	Player        *ent.Player
+	Ghosts        []*ent.Ghost
+	currentScene  Scene
+	isRunning     bool
+	Width         int32
+	Height        int32
+	levelUnlocked int32
+	Control       *mv.Control
 }
 
 func New() *Game {

@@ -4,6 +4,7 @@ import (
 	"pac-clone/internal/entities"
 	"pac-clone/internal/level"
 	mv "pac-clone/internal/movement"
+	"pac-clone/internal/ui"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -12,7 +13,11 @@ func (g *Game) HandleLevel() {
 	rl.ClearBackground(rl.RayWhite)
 
 	if g.Level.Current == "" {
-		g.Level.LoadDefault()
+		if err := g.Level.Load("level1.json"); err != nil {
+			Error := ui.NewError(err.Error(), func() { g.currentScene = MainMenu })
+			Error.Use(g.center(400, 200))
+		}
+		return
 	}
 
 	Draw(rl.Rectangle{
