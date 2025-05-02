@@ -49,6 +49,6 @@ func (l *Level) generateGraph() {
 		}
 	}
 
-	file, _ := os.Create("./simple.gv")
+	file, _ := os.Create("./graph.gv")
 	_ = draw.DOT(l.Graph, file)
 }
