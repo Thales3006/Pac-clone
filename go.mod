@@ -4,6 +4,8 @@ go 1.23.3
 
 require github.com/gen2brain/raylib-go/raylib v0.0.0-20250409052854-a4292f0f0412
 
+require github.com/dominikbraun/graph v0.23.0 // indirect
+
 require (
 	github.com/ebitengine/purego v0.8.2 // indirect
 	github.com/gen2brain/raylib-go/raygui v0.0.0-20250409052854-a4292f0f0412

@@ -56,6 +56,8 @@ func Draw(bounds rl.Rectangle, l *level.Level, p *entities.Player) {
 			switch cell {
 			case level.Wall:
 				rl.DrawRectangleRec(cellRect, rl.Blue)
+			case level.Door:
+				rl.DrawRectangleRec(cellRect, rl.Gray)
 			case level.Point:
 				rl.DrawRectangle(
 					int32(cellRect.X+0.3*cellRect.Width),
