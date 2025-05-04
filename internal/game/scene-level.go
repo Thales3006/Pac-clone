@@ -14,20 +14,13 @@ func (g *Game) HandleLevel() {
 
 	if g.Level.Current == "" {
 		if err := g.Level.Load("level1.json"); err != nil {
-			Error := ui.NewError(err.Error(), func() { g.currentScene = MainMenu })
-			Error.Use(g.center(400, 200))
+			ui.NewError(err.Error(), func() { g.currentScene = MainMenu }).
+				Use(g.center(400, 200))
 		}
 		return
 	}
 
-	Draw(rl.Rectangle{
-		X:      (float32(g.Width) - 800) / 2,
-		Y:      (float32(g.Height) - 800) / 2,
-		Width:  800,
-		Height: 800,
-	},
-		g.Level,
-		g.Player)
+	Draw(g.center(800, 800), g.Level, g.Player)
 
 	deltaTime := rl.GetFrameTime()
 	mv.HandleInput(g.Control, g.Player, g.Level)

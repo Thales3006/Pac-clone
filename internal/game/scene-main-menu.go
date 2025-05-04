@@ -9,7 +9,7 @@ import (
 func (g *Game) HandleMainMenu() {
 	rl.ClearBackground(rl.RayWhite)
 
-	mainMenu := ui.NewComponent([]ui.Element{
+	ui.NewComponent([]ui.Element{
 		&ui.Label{
 			Text: "Main Menu",
 		},
@@ -37,12 +37,6 @@ func (g *Game) HandleMainMenu() {
 				g.isRunning = false
 			},
 		},
-	})
-
-	mainMenu.Use(rl.Rectangle{
-		X:      (float32(g.Width) - 300) / 2,
-		Y:      (float32(g.Height) - 300) / 2,
-		Width:  300,
-		Height: 300,
-	})
+	}).
+		Use(g.center(300, 300))
 }
