@@ -9,11 +9,11 @@ import (
 )
 
 type Level struct {
-	Grid    [][]Side
-	Width   uint8
-	Height  uint8
-	Current string
-	Graph   graph.Graph[[2]uint8, Cell]
+	Grid    [][]Side                    `json:"Grid"`
+	Width   uint8                       `json:"-"`
+	Height  uint8                       `json:"-"`
+	Current string                      `json:"-"`
+	Graph   graph.Graph[[2]uint8, Cell] `json:"-"`
 }
 
 type Side uint8
@@ -66,4 +66,20 @@ func (l *Level) Unload() {
 	l.Height = 0
 	l.Current = ""
 	l.Graph = nil
+}
+
+func (l *Level) Save(path string) error {
+	file, err := os.Create("levels/" + path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	bytes, err := json.MarshalIndent(l, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	_, err = file.Write(bytes)
+	return err
 }

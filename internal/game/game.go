@@ -30,7 +30,7 @@ func New() *Game {
 		isRunning:     true,
 		Width:         int32(rl.GetScreenWidth()),
 		Height:        int32(rl.GetScreenHeight()),
-		levelUnlocked: 1,
+		levelUnlocked: 50,
 		Control:       mv.NewControl(),
 	}
 }

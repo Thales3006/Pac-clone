@@ -20,7 +20,7 @@ func (g *Game) HandleSelectionMenu() {
 		g.currentScene = Level
 	}
 
-	selectionMenu := ui.NewComponent([]ui.Element{
+	ui.NewComponent([]ui.Element{
 		&ui.Label{
 			Text: "Selection Menu",
 		},
@@ -36,9 +36,8 @@ func (g *Game) HandleSelectionMenu() {
 			Text:    "3",
 			OnClick: func() { onClick(3) },
 		},
-	})
-
-	selectionMenu.Use(rl.Rectangle{X: (float32(g.Width) - 300) / 2, Y: (float32(g.Height) - 200) / 2, Width: 300, Height: 200})
+	}).
+		Use(g.center(300, 200))
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = MainMenu
