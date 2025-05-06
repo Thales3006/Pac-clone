@@ -20,7 +20,7 @@ func (g *Game) HandleLevel() {
 		return
 	}
 
-	g.Draw(g.center(800, 800))
+	g.Draw(g.center(800, 800), true)
 
 	deltaTime := rl.GetFrameTime()
 	mv.HandleInput(g.Control, g.Player, g.Level)
@@ -32,7 +32,7 @@ func (g *Game) HandleLevel() {
 	}
 }
 
-func (g *Game) Draw(bounds rl.Rectangle) {
+func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 	rl.DrawRectangleRec(bounds, rl.Black)
 
 	cellRect := rl.Rectangle{
@@ -59,6 +59,10 @@ func (g *Game) Draw(bounds rl.Rectangle) {
 					rl.White)
 			}
 		}
+	}
+
+	if !drawEntities {
+		return
 	}
 
 	rl.DrawRectangleRec(rl.Rectangle{

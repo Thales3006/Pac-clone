@@ -77,7 +77,7 @@ func (g *Game) loadEditor() {
 
 func (g *Game) handleEditing() {
 	bounds := g.center(600, 600)
-	g.Draw(bounds)
+	g.Draw(bounds, false)
 
 	cell := rl.Rectangle{
 		Width:  bounds.Width / float32(g.Level.Width),
