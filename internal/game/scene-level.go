@@ -9,6 +9,14 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
+var (
+	level_loaded bool = false
+	fantasma1    rl.Texture2D
+	fantasma2    rl.Texture2D
+	fantasma3    rl.Texture2D
+	fantasma4    rl.Texture2D
+)
+
 func (g *Game) HandleLevel() {
 	rl.ClearBackground(rl.RayWhite)
 
@@ -32,8 +40,21 @@ func (g *Game) HandleLevel() {
 	}
 }
 
+func (g *Game) loadLevel() {
+	fantasma1 = rl.LoadTexture("assets/fantasma1.png")
+	fantasma2 = rl.LoadTexture("assets/fantasma2.png")
+	fantasma3 = rl.LoadTexture("assets/fantasma3.png")
+	fantasma4 = rl.LoadTexture("assets/fantasma4.png")
+
+	level_loaded = true
+}
+
 func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 	rl.DrawRectangleRec(bounds, rl.Black)
+
+	if !level_loaded {
+		g.loadLevel()
+	}
 
 	cellRect := rl.Rectangle{
 		Width:  bounds.Width / float32(g.Level.Width),
@@ -75,7 +96,6 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 	for i, ghost := range g.Ghosts {
 		switch i {
 		case 0:
-			fantasma1 := rl.LoadTexture("assets/fantasma1.png")
 			if fantasma1.ID == 0 {
 				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
 				return
@@ -90,50 +110,47 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 			)
 			rl.DrawTextureRec(fantasma1, srcRect, position, rl.White)
 		case 1:
-			fantasma1 := rl.LoadTexture("assets/fantasma2.png")
-			if fantasma1.ID == 0 {
+			if fantasma2.ID == 0 {
 				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
-				return
+				continue
 			}
-			fantasma1.Width = int32(cellRect.Width * ghost.Width)
-			fantasma1.Height = int32(cellRect.Height * ghost.Height)
+			fantasma2.Width = int32(cellRect.Width * ghost.Width)
+			fantasma2.Height = int32(cellRect.Height * ghost.Height)
 
-			srcRect := rl.NewRectangle(0, 0, float32(fantasma1.Width), float32(fantasma1.Height))
+			srcRect := rl.NewRectangle(0, 0, float32(fantasma2.Width), float32(fantasma2.Height))
 			position := rl.NewVector2(
 				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
 				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
 			)
-			rl.DrawTextureRec(fantasma1, srcRect, position, rl.White)
+			rl.DrawTextureRec(fantasma2, srcRect, position, rl.White)
 		case 2:
-			fantasma1 := rl.LoadTexture("assets/fantasma3.png")
-			if fantasma1.ID == 0 {
+			if fantasma3.ID == 0 {
 				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
-				return
+				continue
 			}
-			fantasma1.Width = int32(cellRect.Width * ghost.Width)
-			fantasma1.Height = int32(cellRect.Height * ghost.Height)
+			fantasma3.Width = int32(cellRect.Width * ghost.Width)
+			fantasma3.Height = int32(cellRect.Height * ghost.Height)
 
-			srcRect := rl.NewRectangle(0, 0, float32(fantasma1.Width), float32(fantasma1.Height))
+			srcRect := rl.NewRectangle(0, 0, float32(fantasma3.Width), float32(fantasma3.Height))
 			position := rl.NewVector2(
 				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
 				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
 			)
-			rl.DrawTextureRec(fantasma1, srcRect, position, rl.White)
+			rl.DrawTextureRec(fantasma3, srcRect, position, rl.White)
 		case 3:
-			fantasma1 := rl.LoadTexture("assets/fantasma4.png")
-			if fantasma1.ID == 0 {
+			if fantasma4.ID == 0 {
 				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
-				return
+				continue
 			}
-			fantasma1.Width = int32(cellRect.Width * ghost.Width)
-			fantasma1.Height = int32(cellRect.Height * ghost.Height)
+			fantasma4.Width = int32(cellRect.Width * ghost.Width)
+			fantasma4.Height = int32(cellRect.Height * ghost.Height)
 
-			srcRect := rl.NewRectangle(0, 0, float32(fantasma1.Width), float32(fantasma1.Height))
+			srcRect := rl.NewRectangle(0, 0, float32(fantasma4.Width), float32(fantasma4.Height))
 			position := rl.NewVector2(
 				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
 				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
 			)
-			rl.DrawTextureRec(fantasma1, srcRect, position, rl.White)
+			rl.DrawTextureRec(fantasma4, srcRect, position, rl.White)
 		}
 	}
 }
