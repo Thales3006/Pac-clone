@@ -23,9 +23,14 @@ type Game struct {
 
 func New() *Game {
 	return &Game{
-		Level:         lvl.NewLevel(),
-		Player:        ent.NewPlayer(),
-		Ghosts:        []*ent.Ghost{ent.NewGhost()},
+		Level:  lvl.NewLevel(),
+		Player: ent.NewPlayer(),
+		Ghosts: []*ent.Ghost{
+			ent.NewGhost(8.1, 9, 0.50, 0.50),
+			ent.NewGhost(8.7, 9, 0.48, 0.48),
+			ent.NewGhost(9.3, 9, 0.45, 0.45),
+			ent.NewGhost(9.9, 9, 0.44, 0.44),
+		},
 		currentScene:  MainMenu,
 		isRunning:     true,
 		Width:         int32(rl.GetScreenWidth()),

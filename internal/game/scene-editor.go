@@ -2,7 +2,6 @@ package game
 
 import (
 	"os"
-	"pac-clone/internal/entities"
 	"pac-clone/internal/level"
 	"pac-clone/internal/ui"
 
@@ -78,7 +77,7 @@ func (g *Game) loadEditor() {
 
 func (g *Game) handleEditing() {
 	bounds := g.center(600, 600)
-	Draw(bounds, g.Level, &entities.Player{})
+	g.Draw(bounds)
 
 	cell := rl.Rectangle{
 		Width:  bounds.Width / float32(g.Level.Width),
