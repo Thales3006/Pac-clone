@@ -1,12 +1,20 @@
 package game
 
 import (
-	"pac-clone/internal/entities"
+	"fmt"
 	"pac-clone/internal/level"
 	mv "pac-clone/internal/movement"
 	"pac-clone/internal/ui"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+)
+
+var (
+	level_loaded bool = false
+	fantasma1    rl.Texture2D
+	fantasma2    rl.Texture2D
+	fantasma3    rl.Texture2D
+	fantasma4    rl.Texture2D
 )
 
 func (g *Game) HandleLevel() {
@@ -20,7 +28,7 @@ func (g *Game) HandleLevel() {
 		return
 	}
 
-	Draw(g.center(800, 800), g.Level, g.Player)
+	g.Draw(g.center(800, 800), true)
 
 	deltaTime := rl.GetFrameTime()
 	mv.HandleInput(g.Control, g.Player, g.Level)
@@ -32,20 +40,32 @@ func (g *Game) HandleLevel() {
 	}
 }
 
-func Draw(bounds rl.Rectangle, l *level.Level, p *entities.Player) {
+func (g *Game) loadLevel() {
+	fantasma1 = rl.LoadTexture("assets/fantasma1.png")
+	fantasma2 = rl.LoadTexture("assets/fantasma2.png")
+	fantasma3 = rl.LoadTexture("assets/fantasma3.png")
+	fantasma4 = rl.LoadTexture("assets/fantasma4.png")
+
+	level_loaded = true
+}
+
+func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 	rl.DrawRectangleRec(bounds, rl.Black)
 
-	cellRect := rl.Rectangle{
-		Width:  bounds.Width / float32(l.Width),
-		Height: bounds.Height / float32(l.Height),
+	if !level_loaded {
+		g.loadLevel()
 	}
 
-	for i := range l.Grid {
-		for j, cell := range l.Grid[i] {
+	cellRect := rl.Rectangle{
+		Width:  bounds.Width / float32(g.Level.Width),
+		Height: bounds.Height / float32(g.Level.Height),
+	}
+
+	for i := range g.Level.Grid {
+		for j, cell := range g.Level.Grid[i] {
 
 			cellRect.X = bounds.X + float32(j)*cellRect.Width
 			cellRect.Y = bounds.Y + float32(i)*cellRect.Height
-
 			switch cell {
 			case level.Wall:
 				rl.DrawRectangleRec(cellRect, rl.Blue)
@@ -62,11 +82,75 @@ func Draw(bounds rl.Rectangle, l *level.Level, p *entities.Player) {
 		}
 	}
 
+	if !drawEntities {
+		return
+	}
+
 	rl.DrawRectangleRec(rl.Rectangle{
-		X:      bounds.X + cellRect.Width*(p.X+(1-p.Width)/2),
-		Y:      bounds.Y + cellRect.Height*(p.Y+(1-p.Height)/2),
-		Width:  cellRect.Width * p.Width,
-		Height: cellRect.Height * p.Height,
+		X:      bounds.X + cellRect.Width*(g.Player.X+(1-g.Player.Width)/2),
+		Y:      bounds.Y + cellRect.Height*(g.Player.Y+(1-g.Player.Height)/2),
+		Width:  cellRect.Width * g.Player.Width,
+		Height: cellRect.Height * g.Player.Height,
 	},
 		rl.Yellow)
+	for i, ghost := range g.Ghosts {
+		switch i {
+		case 0:
+			if fantasma1.ID == 0 {
+				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
+				return
+			}
+			fantasma1.Width = int32(cellRect.Width * ghost.Width)
+			fantasma1.Height = int32(cellRect.Height * ghost.Height)
+
+			srcRect := rl.NewRectangle(0, 0, float32(fantasma1.Width), float32(fantasma1.Height))
+			position := rl.NewVector2(
+				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
+				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
+			)
+			rl.DrawTextureRec(fantasma1, srcRect, position, rl.White)
+		case 1:
+			if fantasma2.ID == 0 {
+				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
+				continue
+			}
+			fantasma2.Width = int32(cellRect.Width * ghost.Width)
+			fantasma2.Height = int32(cellRect.Height * ghost.Height)
+
+			srcRect := rl.NewRectangle(0, 0, float32(fantasma2.Width), float32(fantasma2.Height))
+			position := rl.NewVector2(
+				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
+				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
+			)
+			rl.DrawTextureRec(fantasma2, srcRect, position, rl.White)
+		case 2:
+			if fantasma3.ID == 0 {
+				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
+				continue
+			}
+			fantasma3.Width = int32(cellRect.Width * ghost.Width)
+			fantasma3.Height = int32(cellRect.Height * ghost.Height)
+
+			srcRect := rl.NewRectangle(0, 0, float32(fantasma3.Width), float32(fantasma3.Height))
+			position := rl.NewVector2(
+				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
+				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
+			)
+			rl.DrawTextureRec(fantasma3, srcRect, position, rl.White)
+		case 3:
+			if fantasma4.ID == 0 {
+				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
+				continue
+			}
+			fantasma4.Width = int32(cellRect.Width * ghost.Width)
+			fantasma4.Height = int32(cellRect.Height * ghost.Height)
+
+			srcRect := rl.NewRectangle(0, 0, float32(fantasma4.Width), float32(fantasma4.Height))
+			position := rl.NewVector2(
+				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
+				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
+			)
+			rl.DrawTextureRec(fantasma4, srcRect, position, rl.White)
+		}
+	}
 }
