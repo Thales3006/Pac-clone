@@ -32,6 +32,7 @@ func (g *Game) HandleLevel() {
 
 	deltaTime := rl.GetFrameTime()
 	mv.HandleInput(g.Control, g.Player, g.Level)
+	mv.HandleAI(g.Player, g.Ghosts, g.Level)
 	mv.UpdateEntity(&g.Player.Entity, g.Level, deltaTime)
 	mv.UpdateLevel(g.Level, &g.Player.Entity)
 
