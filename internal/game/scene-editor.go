@@ -12,7 +12,7 @@ var (
 	editor_loaded     bool = false
 	editor_listView   *ui.ListView
 	editor_file_names []string
-	editor_tool       level.Side = level.Wall
+	editor_tool       level.Cell = level.Wall
 )
 
 func (g *Game) HandleEditor() {
@@ -22,9 +22,9 @@ func (g *Game) HandleEditor() {
 		g.loadEditor()
 	}
 
-	if *editor_listView.ScrollIndex >= 0 && editor_file_names[*editor_listView.ScrollIndex] != g.Level.Current {
+	if *editor_listView.ScrollIndex >= 0 && "levels/"+editor_file_names[*editor_listView.ScrollIndex] != g.Level.Current {
 		g.Level.Unload()
-		g.Level.Load(editor_file_names[*editor_listView.ScrollIndex])
+		g.Level.Load("levels/" + editor_file_names[*editor_listView.ScrollIndex])
 	}
 
 	g.handleEditing()
@@ -32,18 +32,27 @@ func (g *Game) HandleEditor() {
 	rl.DrawText(g.Level.Current, 150, 0, 30, rl.Black)
 	editor_listView.Use(rl.Rectangle{X: 0, Y: 0, Width: 100, Height: 400})
 
-	button := &ui.Button{
-		Text: "Save",
-		OnClick: func() {
-			g.Level.Save(g.Level.Current)
+	ui.NewComponent([]ui.Element{
+		&ui.Button{
+			Text: "Save",
+			OnClick: func() {
+				g.Level.Save(g.Level.Current)
+			},
 		},
-	}
-	button.Use(rl.Rectangle{
-		X:      float32(g.Width) - 200,
-		Y:      float32(g.Height) - 100,
-		Width:  200,
-		Height: 100,
-	})
+		&ui.Button{
+			Text: "New",
+			OnClick: func() {
+				g.Level.CreateFile()
+				editor_loaded = false
+			},
+		},
+	}).
+		Use(rl.Rectangle{
+			X:      float32(g.Width) - 200,
+			Y:      float32(g.Height) - 100,
+			Width:  200,
+			Height: 100,
+		})
 
 	switch rl.GetKeyPressed() {
 	case rl.KeyOne:
