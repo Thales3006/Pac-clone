@@ -9,11 +9,11 @@ import (
 )
 
 type Level struct {
-	Grid    [][]Side                    `json:"Grid"`
-	Width   uint8                       `json:"-"`
-	Height  uint8                       `json:"-"`
-	Current string                      `json:"-"`
-	Graph   graph.Graph[[2]uint8, Cell] `json:"-"`
+	Grid    [][]Side                        `json:"Grid"`
+	Width   uint8                           `json:"-"`
+	Height  uint8                           `json:"-"`
+	Current string                          `json:"-"`
+	Graph   graph.Graph[[2]uint8, [2]uint8] `json:"-"`
 }
 
 type Side uint8

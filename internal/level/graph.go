@@ -8,14 +8,8 @@ import (
 	"github.com/dominikbraun/graph/draw"
 )
 
-type Cell struct {
-	X    uint8
-	Y    uint8
-	Side Side
-}
-
-func posHash(c Cell) [2]uint8 {
-	return [2]uint8{c.X, c.Y}
+func posHash(c [2]uint8) [2]uint8 {
+	return c
 }
 
 func (l *Level) generateGraph() {
@@ -23,7 +17,7 @@ func (l *Level) generateGraph() {
 	for i := range l.Grid {
 		for j, cell := range l.Grid[i] {
 			if cell != Wall {
-				l.Graph.AddVertex(Cell{uint8(i), uint8(j), cell},
+				l.Graph.AddVertex([2]uint8{uint8(i), uint8(j)},
 					graph.VertexAttribute("pos", strconv.Itoa(j)+","+strconv.Itoa(int(l.Height-1)-i)+"!"))
 			}
 		}

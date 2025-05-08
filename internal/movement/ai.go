@@ -11,25 +11,24 @@ import (
 func HandleAI(p *entities.Player, ghosts []*entities.Ghost, l *level.Level) {
 	for _, ghost := range ghosts {
 		dir := direction(
-			level.Cell{Y: uint8(ghost.X), X: uint8(ghost.Y), Side: level.Empty},
-			level.Cell{Y: uint8(p.X), X: uint8(p.Y), Side: level.Empty},
-			l,
-		)
+			rl.Vector2{X: ghost.X, Y: ghost.Y},
+			rl.Vector2{X: p.X, Y: p.Y},
+			l)
 		ghost.DesiredDir = dir
 		fmt.Println(dir)
 	}
 
 }
 
-func direction(a level.Cell, b level.Cell, l *level.Level) entities.Direction {
-	path, _ := level.AStar(l.Graph, a, b)
+func direction(a rl.Vector2, b rl.Vector2, l *level.Level) entities.Direction {
+	path, _ := level.AStar(l.Graph, [2]uint8{uint8(a.Y), uint8(a.X)}, [2]uint8{uint8(b.Y), uint8(b.X)})
 
-	next := level.Cell{X: uint8(a.Y), Y: uint8(a.X)}
+	next := [2]uint8{uint8(a.Y), uint8(a.X)}
 	if len(path) > 1 {
 		next = path[1]
 	}
 
-	dir := rl.Vector2{X: float32(next.Y) - float32(a.Y), Y: float32(next.X) - float32(a.X)}
+	dir := rl.Vector2{X: float32(next[1]) - float32(uint8(a.X)), Y: float32(next[0]) - float32(uint8(a.Y))}
 	fmt.Println(dir)
 
 	switch dir {

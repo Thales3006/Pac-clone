@@ -9,7 +9,7 @@ import (
 )
 
 type PriorityQueueItem struct {
-	Cell     Cell
+	Cell     [2]uint8
 	Priority float64
 	Index    int
 }
@@ -44,16 +44,16 @@ func (pq *PriorityQueue) Pop() any {
 	return item
 }
 
-func heuristic(a, b Cell) float64 {
-	return math.Abs(float64(a.X)-float64(b.X)) + math.Abs(float64(a.Y)-float64(b.Y))
+func heuristic(a, b [2]uint8) float64 {
+	return math.Abs(float64(a[0])-float64(b[0])) + math.Abs(float64(a[1])-float64(b[1]))
 }
 
-func AStar(g graph.Graph[[2]uint8, Cell], start, goal Cell) ([]Cell, error) {
+func AStar(g graph.Graph[[2]uint8, [2]uint8], start, goal [2]uint8) ([][2]uint8, error) {
 	openSet := &PriorityQueue{}
 	heap.Init(openSet)
 	heap.Push(openSet, &PriorityQueueItem{Cell: start, Priority: 0})
 
-	cameFrom := make(map[[2]uint8]Cell)
+	cameFrom := make(map[[2]uint8][2]uint8)
 	costSoFar := make(map[[2]uint8]float64)
 	costSoFar[posHash(start)] = 0
 
@@ -66,10 +66,10 @@ func AStar(g graph.Graph[[2]uint8, Cell], start, goal Cell) ([]Cell, error) {
 		current := heap.Pop(openSet).(*PriorityQueueItem).Cell
 
 		if posHash(current) == posHash(goal) {
-			path := []Cell{current}
+			path := [][2]uint8{current}
 			for current != start {
 				current = cameFrom[posHash(current)]
-				path = append([]Cell{current}, path...)
+				path = append([][2]uint8{current}, path...)
 			}
 			return path, nil
 		}
