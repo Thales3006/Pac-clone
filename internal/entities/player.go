@@ -16,7 +16,7 @@ func NewPlayer() *Player {
 				Width:  0.5,
 				Height: 0.5,
 			},
-			Speed: 5,
+			Speed: 3.5,
 		},
 		Health: 5,
 	}
