@@ -34,6 +34,11 @@ func (g *Game) HandleLevel() {
 	mv.HandleInput(g.Control, g.Player, g.Level)
 	mv.HandleAI(g.Player, g.Ghosts, g.Level)
 	mv.UpdateEntity(&g.Player.Entity, g.Level, deltaTime)
+
+	for _, ghost := range g.Ghosts {
+		mv.UpdateEntity(&ghost.Entity, g.Level, deltaTime)
+	}
+
 	mv.UpdateLevel(g.Level, &g.Player.Entity)
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
