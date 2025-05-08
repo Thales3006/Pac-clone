@@ -15,7 +15,7 @@ func NewGhost(xis float32, epi float32, larg float32, alt float32) *Ghost {
 				Width:  larg,
 				Height: alt,
 			},
-			Speed: 4.5,
+			Speed: 3,
 		},
 	}
 }
