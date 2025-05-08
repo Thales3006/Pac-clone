@@ -100,11 +100,11 @@ func canMove(e *ent.Entity, l *level.Level, dir ent.Direction, delta float32) bo
 
 	offset := dirVectors[dir]
 
-	nextX := uint8(e.X + offset.X*e.Speed*delta)
-	nextY := uint8(e.Y + offset.Y*e.Speed*delta)
+	nextX := int32(e.X + offset.X*e.Speed*delta)
+	nextY := int32(e.Y + offset.Y*e.Speed*delta)
 
-	nextXs := uint8(e.X + 0.99 + offset.X*e.Speed*delta)
-	nextYs := uint8(e.Y + 0.99 + offset.Y*e.Speed*delta)
+	nextXs := int32(e.X + 0.99 + offset.X*e.Speed*delta)
+	nextYs := int32(e.Y + 0.99 + offset.Y*e.Speed*delta)
 
 	if nextX >= l.Width || nextY >= l.Height || nextXs >= l.Width || nextYs >= l.Height {
 		return true

@@ -21,14 +21,14 @@ func HandleAI(p *entities.Player, ghosts []*entities.Ghost, l *level.Level) {
 }
 
 func direction(a rl.Vector2, b rl.Vector2, l *level.Level) entities.Direction {
-	path, _ := level.AStar(l.Graph, [2]uint8{uint8(a.Y), uint8(a.X)}, [2]uint8{uint8(b.Y), uint8(b.X)})
+	path, _ := level.AStar(l.Graph, [2]int32{int32(a.Y), int32(a.X)}, [2]int32{int32(b.Y), int32(b.X)})
 
-	next := [2]uint8{uint8(a.Y), uint8(a.X)}
+	next := [2]int32{int32(a.Y), int32(a.X)}
 	if len(path) > 1 {
 		next = path[1]
 	}
 
-	dir := rl.Vector2{X: float32(next[1]) - float32(uint8(a.X)), Y: float32(next[0]) - float32(uint8(a.Y))}
+	dir := rl.Vector2{X: float32(next[1]) - float32(int32(a.X)), Y: float32(next[0]) - float32(int32(a.Y))}
 	fmt.Println(dir)
 
 	switch dir {
