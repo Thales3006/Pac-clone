@@ -55,10 +55,10 @@ func UpdateEntity(e *ent.Entity, l *level.Level, delta float32) {
 	e.X += dir.X * e.Speed * delta
 	e.Y += dir.Y * e.Speed * delta
 
-	if e.X >= float32(l.Width) {
+	if e.X >= float32(l.Width-1) {
 		e.X = 0
 	}
-	if e.Y >= float32(l.Height) {
+	if e.Y >= float32(l.Height-1) {
 		e.Y = 0
 	}
 	if e.X < 0 {
