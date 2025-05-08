@@ -51,7 +51,7 @@ func (l *Level) Load(path string) error {
 		return err
 	}
 
-	l.Width = uint8(len(l.Grid[3]))
+	l.Width = uint8(len(l.Grid[0]))
 	l.Height = uint8(len(l.Grid))
 	l.Current = path
 
