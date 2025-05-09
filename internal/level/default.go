@@ -24,7 +24,7 @@ func (l *Level) LoadDefault() {
 		{Wall, Point, Point, Point, Point, Point, Point, Point, Point, Point, Point, Point, Point, Point, Point, Point, Point, Point, Wall},
 		{Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall},
 	}
-	l.Width = int32(len(l.Grid[Point]))
+	l.Width = int32(len(l.Grid[0]))
 	l.Height = int32(len(l.Grid))
 	l.Current = "Default.json"
 }
