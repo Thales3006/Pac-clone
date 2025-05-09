@@ -16,7 +16,7 @@ func (g *Game) HandleSelectionMenu() {
 			fmt.Println("not unlocked")
 			return
 		}
-		g.Level.Load("level" + strconv.Itoa(int(level)) + ".json")
+		g.Level.Load("levels/level" + strconv.Itoa(int(level)) + ".json")
 		g.currentScene = Level
 	}
 

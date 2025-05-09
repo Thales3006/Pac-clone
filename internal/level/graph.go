@@ -8,14 +8,12 @@ import (
 	"github.com/dominikbraun/graph/draw"
 )
 
-type Cell struct {
-	X    uint8
-	Y    uint8
-	Side Side
+func posHash(c [2]int32) [2]int32 {
+	return c
 }
 
-func posHash(c Cell) [2]uint8 {
-	return [2]uint8{c.X, c.Y}
+func mod(a, m int32) int32 {
+	return (a%m + m) % m
 }
 
 func (l *Level) generateGraph() {
@@ -23,7 +21,7 @@ func (l *Level) generateGraph() {
 	for i := range l.Grid {
 		for j, cell := range l.Grid[i] {
 			if cell != Wall {
-				l.Graph.AddVertex(Cell{uint8(i), uint8(j), cell},
+				l.Graph.AddVertex([2]int32{int32(i), int32(j)},
 					graph.VertexAttribute("pos", strconv.Itoa(j)+","+strconv.Itoa(int(l.Height-1)-i)+"!"))
 			}
 		}
@@ -34,18 +32,10 @@ func (l *Level) generateGraph() {
 			if cell == Wall {
 				continue
 			}
-			if _, err := l.Graph.Vertex([2]uint8{uint8(i), uint8(j + 1)}); err == nil {
-				l.Graph.AddEdge([2]uint8{uint8(i), uint8(j)}, [2]uint8{uint8(i), uint8(j + 1)})
-			}
-			if _, err := l.Graph.Vertex([2]uint8{uint8(i), uint8(j - 1)}); err == nil {
-				l.Graph.AddEdge([2]uint8{uint8(i), uint8(j)}, [2]uint8{uint8(i), uint8(j - 1)})
-			}
-			if _, err := l.Graph.Vertex([2]uint8{uint8(i + 1), uint8(j)}); err == nil {
-				l.Graph.AddEdge([2]uint8{uint8(i), uint8(j)}, [2]uint8{uint8(i + 1), uint8(j)})
-			}
-			if _, err := l.Graph.Vertex([2]uint8{uint8(i - 1), uint8(j)}); err == nil {
-				l.Graph.AddEdge([2]uint8{uint8(i), uint8(j)}, [2]uint8{uint8(i - 1), uint8(j)})
-			}
+			l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{int32(i), mod(int32(j+1), l.Width)})
+			l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{int32(i), mod(int32(j-1), l.Width)})
+			l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{mod(int32(i+1), l.Height), int32(j)})
+			l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{mod(int32(i-1), l.Height), int32(j)})
 		}
 	}
 

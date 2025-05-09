@@ -1,7 +1,7 @@
 package game
 
 import (
-	"fmt"
+	"pac-clone/internal/entities"
 	"pac-clone/internal/level"
 	mv "pac-clone/internal/movement"
 	"pac-clone/internal/ui"
@@ -11,10 +11,10 @@ import (
 
 var (
 	level_loaded bool = false
-	fantasma1    rl.Texture2D
-	fantasma2    rl.Texture2D
-	fantasma3    rl.Texture2D
-	fantasma4    rl.Texture2D
+	blinkyTex    rl.Texture2D
+	pinkyTex     rl.Texture2D
+	inkyTex      rl.Texture2D
+	clideTex     rl.Texture2D
 )
 
 func (g *Game) HandleLevel() {
@@ -32,7 +32,13 @@ func (g *Game) HandleLevel() {
 
 	deltaTime := rl.GetFrameTime()
 	mv.HandleInput(g.Control, g.Player, g.Level)
+	mv.HandleAI(g.Player, g.Ghosts, g.Level)
 	mv.UpdateEntity(&g.Player.Entity, g.Level, deltaTime)
+
+	for _, ghost := range g.Ghosts {
+		mv.UpdateEntity(&ghost.Entity, g.Level, deltaTime)
+	}
+
 	mv.UpdateLevel(g.Level, &g.Player.Entity)
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
@@ -41,10 +47,10 @@ func (g *Game) HandleLevel() {
 }
 
 func (g *Game) loadLevel() {
-	fantasma1 = rl.LoadTexture("assets/fantasma1.png")
-	fantasma2 = rl.LoadTexture("assets/fantasma2.png")
-	fantasma3 = rl.LoadTexture("assets/fantasma3.png")
-	fantasma4 = rl.LoadTexture("assets/fantasma4.png")
+	blinkyTex = rl.LoadTexture("assets/blinky.png")
+	pinkyTex = rl.LoadTexture("assets/pinky.png")
+	inkyTex = rl.LoadTexture("assets/inky.png")
+	clideTex = rl.LoadTexture("assets/clyde.png")
 
 	level_loaded = true
 }
@@ -93,64 +99,28 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 		Height: cellRect.Height * g.Player.Height,
 	},
 		rl.Yellow)
-	for i, ghost := range g.Ghosts {
-		switch i {
-		case 0:
-			if fantasma1.ID == 0 {
-				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
-				return
-			}
-			fantasma1.Width = int32(cellRect.Width * ghost.Width)
-			fantasma1.Height = int32(cellRect.Height * ghost.Height)
 
-			srcRect := rl.NewRectangle(0, 0, float32(fantasma1.Width), float32(fantasma1.Height))
-			position := rl.NewVector2(
-				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
-				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
-			)
-			rl.DrawTextureRec(fantasma1, srcRect, position, rl.White)
-		case 1:
-			if fantasma2.ID == 0 {
-				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
-				continue
-			}
-			fantasma2.Width = int32(cellRect.Width * ghost.Width)
-			fantasma2.Height = int32(cellRect.Height * ghost.Height)
-
-			srcRect := rl.NewRectangle(0, 0, float32(fantasma2.Width), float32(fantasma2.Height))
-			position := rl.NewVector2(
-				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
-				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
-			)
-			rl.DrawTextureRec(fantasma2, srcRect, position, rl.White)
-		case 2:
-			if fantasma3.ID == 0 {
-				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
-				continue
-			}
-			fantasma3.Width = int32(cellRect.Width * ghost.Width)
-			fantasma3.Height = int32(cellRect.Height * ghost.Height)
-
-			srcRect := rl.NewRectangle(0, 0, float32(fantasma3.Width), float32(fantasma3.Height))
-			position := rl.NewVector2(
-				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
-				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
-			)
-			rl.DrawTextureRec(fantasma3, srcRect, position, rl.White)
-		case 3:
-			if fantasma4.ID == 0 {
-				fmt.Println("ERRO: Não foi possível carregar fantasma1.png")
-				continue
-			}
-			fantasma4.Width = int32(cellRect.Width * ghost.Width)
-			fantasma4.Height = int32(cellRect.Height * ghost.Height)
-
-			srcRect := rl.NewRectangle(0, 0, float32(fantasma4.Width), float32(fantasma4.Height))
-			position := rl.NewVector2(
-				bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
-				bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
-			)
-			rl.DrawTextureRec(fantasma4, srcRect, position, rl.White)
+	for _, ghost := range g.Ghosts {
+		texture := &rl.Texture2D{}
+		switch ghost.Personality {
+		case entities.Blinky:
+			texture = &blinkyTex
+		case entities.Pinky:
+			texture = &pinkyTex
+		case entities.Inky:
+			texture = &inkyTex
+		case entities.Clide:
+			texture = &clideTex
 		}
+
+		texture.Width = int32(cellRect.Width * ghost.Width)
+		texture.Height = int32(cellRect.Height * ghost.Height)
+
+		srcRect := rl.NewRectangle(0, 0, float32(texture.Width), float32(texture.Height))
+		position := rl.NewVector2(
+			bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
+			bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
+		)
+		rl.DrawTextureRec(*texture, srcRect, position, rl.White)
 	}
 }

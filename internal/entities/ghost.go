@@ -2,20 +2,41 @@ package entities
 
 import rl "github.com/gen2brain/raylib-go/raylib"
 
+type Personality uint8
+
+const (
+	Blinky Personality = iota
+	Pinky
+	Inky
+	Clide
+)
+
+type State uint8
+
+const (
+	Chase State = iota
+	Scared
+	Dead
+	CScared
+)
+
 type Ghost struct {
 	Entity
+	Personality Personality
+	State       State
 }
 
-func NewGhost(xis float32, epi float32, larg float32, alt float32) *Ghost {
+func NewGhost(personality Personality) *Ghost {
 	return &Ghost{
 		Entity: Entity{
 			Rectangle: rl.Rectangle{
-				X:      xis,
-				Y:      epi,
-				Width:  larg,
-				Height: alt,
+				X:      8,
+				Y:      9,
+				Width:  1,
+				Height: 1,
 			},
-			Speed: 4.5,
+			Speed: 3,
 		},
+		Personality: personality,
 	}
 }

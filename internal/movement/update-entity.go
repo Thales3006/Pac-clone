@@ -15,57 +15,50 @@ var dirVectors = map[ent.Direction]rl.Vector2{
 	ent.Right: {X: 1, Y: 0},
 }
 
+func mod(a, m int32) int32 {
+	return (a%m + m) % m
+}
+
+func modf(a, m float32) float32 {
+	for a >= m {
+		a -= m
+	}
+	for a < 0 {
+		a += m
+	}
+	return a
+}
+
 func UpdateEntity(e *ent.Entity, l *level.Level, delta float32) {
-
-	dir := dirVectors[e.Direction]
-	ndir := dirVectors[e.DesiredDir]
-
 	if e.Direction == ent.None {
 		e.Direction = e.DesiredDir
-		return
 	}
 
-	if willPassCenter(e, delta) && e.Direction != e.DesiredDir {
-
-		if e.Direction == ent.Right || e.Direction == ent.Left {
-			temp := deltaInt(e.X, dir.X)
-			e.X = float32(int32(e.X)) + (dir.X+1)/2
-			if canMove(e, l, e.DesiredDir, delta) {
-				e.Y += ndir.Y * (e.Speed*delta - temp)
-				e.Direction = e.DesiredDir
-			}
+	if willPassCenter(e, delta) {
+		x := e.X
+		y := e.Y
+		closest := closestCenter(e, l, delta)
+		e.X = float32(closest[0])
+		e.Y = float32(closest[1])
+		if canMove(e, l, e.DesiredDir, delta) {
+			e.Direction = e.DesiredDir
 		} else {
-			temp := deltaInt(e.Y, dir.Y)
-			e.Y = float32(int32(e.Y)) + (dir.Y+1)/2
-			if canMove(e, l, e.DesiredDir, delta) {
-				e.X += ndir.X * (e.Speed*delta - temp)
-				e.Direction = e.DesiredDir
-			}
+			e.X = x
+			e.Y = y
 		}
-		return
 	}
 
-	if !canMove(e, l, e.Direction, delta) {
+	dir := dirVectors[e.Direction]
+
+	if canMove(e, l, e.Direction, delta) {
+		e.X = modf(e.X+dir.X*e.Speed*delta, float32(l.Width))
+		e.Y = modf(e.Y+dir.Y*e.Speed*delta, float32(l.Height))
+
+	} else {
+		closest := closestCenter(e, l, delta)
+		e.X = float32(closest[0])
+		e.Y = float32(closest[1])
 		e.Direction = ent.None
-		e.X = float32(int32(e.X))
-		e.Y = float32(int32(e.Y))
-		return
-	}
-
-	e.X += dir.X * e.Speed * delta
-	e.Y += dir.Y * e.Speed * delta
-
-	if e.X >= float32(l.Width) {
-		e.X = 0
-	}
-	if e.Y >= float32(l.Height) {
-		e.Y = 0
-	}
-	if e.X < 0 {
-		e.X = float32(l.Width) - 1
-	}
-	if e.Y < 0 {
-		e.Y = float32(l.Height) - 1
 	}
 
 }
@@ -76,11 +69,15 @@ func willPassCenter(e *ent.Entity, delta float32) bool {
 	return containsCenter(e.X, d.X*e.Speed*delta) || containsCenter(e.Y, d.Y*e.Speed*delta)
 }
 
-func deltaInt(f, dir float32) float32 {
-	if dir == 1 {
-		return 1 - (f - float32(int32(f)))
-	} else {
-		return (f - float32(int32(f)))
+func closestCenter(e *ent.Entity, l *level.Level, delta float32) [2]int32 {
+	d := dirVectors[e.Direction]
+
+	nextX := e.X + d.X*e.Speed*delta
+	nextY := e.Y + d.Y*e.Speed*delta
+
+	return [2]int32{
+		int32(modf(nextX+0.5, float32(l.Width))),
+		int32(modf(nextY+0.5, float32(l.Height))),
 	}
 }
 
@@ -95,20 +92,17 @@ func containsCenter(f, D float32) bool {
 
 func canMove(e *ent.Entity, l *level.Level, dir ent.Direction, delta float32) bool {
 	if dir == ent.None {
-		return false
+		return true
 	}
 
 	offset := dirVectors[dir]
 
-	nextX := uint8(e.X + offset.X*e.Speed*delta)
-	nextY := uint8(e.Y + offset.Y*e.Speed*delta)
+	nextX := int32(modf(e.X+offset.X*e.Speed*delta, float32(l.Width)))
+	nextY := int32(modf(e.Y+offset.Y*e.Speed*delta, float32(l.Height)))
 
-	nextXs := uint8(e.X + 0.99 + offset.X*e.Speed*delta)
-	nextYs := uint8(e.Y + 0.99 + offset.Y*e.Speed*delta)
+	nextXS := int32(modf(e.X+0.99+offset.X*e.Speed*delta, float32(l.Width)))
+	nextYS := int32(modf(e.Y+0.99+offset.Y*e.Speed*delta, float32(l.Height)))
 
-	if nextX >= l.Width || nextY >= l.Height || nextXs >= l.Width || nextYs >= l.Height {
-		return true
-	}
-	return l.Grid[nextY][nextX] != level.Wall && l.Grid[nextYs][nextXs] != level.Wall
+	return l.Grid[nextY][nextX] != level.Wall && l.Grid[nextYS][nextXS] != level.Wall
 
 }
