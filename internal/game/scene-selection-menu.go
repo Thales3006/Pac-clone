@@ -2,44 +2,52 @@ package game
 
 import (
 	"fmt"
+	"os"
 	"pac-clone/internal/ui"
 	"strconv"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func (g *Game) HandleSelectionMenu() {
-	rl.ClearBackground(rl.RayWhite)
-
-	onClick := func(level int32) {
-		if level > g.levelUnlocked {
-			fmt.Println("not unlocked")
-			return
-		}
-		g.Level.Load("levels/level" + strconv.Itoa(int(level)) + ".json")
-		g.currentScene = Level
-	}
-
-	ui.NewComponent([]ui.Element{
+var (
+	selectionMenu_loaded bool         = false
+	levels               []ui.Element = []ui.Element{
 		&ui.Label{
 			Text: "Selection Menu",
 		},
-		&ui.Button{
-			Text:    "1",
-			OnClick: func() { onClick(1) },
-		},
-		&ui.Button{
-			Text:    "2",
-			OnClick: func() { onClick(2) },
-		},
-		&ui.Button{
-			Text:    "3",
-			OnClick: func() { onClick(3) },
-		},
-	}).
-		Use(g.center(300, 200))
+	}
+)
+
+func (g *Game) HandleSelectionMenu() {
+	rl.ClearBackground(rl.RayWhite)
+
+	if !selectionMenu_loaded {
+		g.loadSelectionMenu()
+		selectionMenu_loaded = true
+	}
+
+	ui.NewComponent(levels).Use(g.center(300, 200))
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = MainMenu
+	}
+}
+
+func (g *Game) loadSelectionMenu() {
+
+	var counter int32 = 1
+	for {
+		filename := fmt.Sprintf("%s%d%s", "levels/level", counter, ".json")
+		if _, err := os.Stat(filename); os.IsNotExist(err) {
+			break
+		}
+		levels = append(levels, &ui.Button{
+			Text: strconv.Itoa(int(counter)),
+			OnClick: func() {
+				g.Level.Load(filename)
+				g.currentScene = Level
+			},
+		})
+		counter++
 	}
 }

@@ -5,11 +5,14 @@ import (
 )
 
 type Level struct {
-	Grid    [][]Cell                        `json:"Grid"`
-	Width   int32                           `json:"-"`
-	Height  int32                           `json:"-"`
-	Current string                          `json:"-"`
-	Graph   graph.Graph[[2]int32, [2]int32] `json:"-"`
+	Grid        [][]Cell                        `json:"Grid"`
+	Width       int32                           `json:"-"`
+	Height      int32                           `json:"-"`
+	Current     string                          `json:"-"`
+	Graph       graph.Graph[[2]int32, [2]int32] `json:"-"`
+	Points      int32                           `json:"-"`
+	SpawnPlayer [2]int32                        `json:"SpawnPlayer"`
+	SpawnGhost  [2]int32                        `json:"SpawnGhost"`
 }
 
 type Cell int32
@@ -19,6 +22,7 @@ const (
 	Wall
 	Door
 	Point
+	Power
 )
 
 func NewLevel() *Level {

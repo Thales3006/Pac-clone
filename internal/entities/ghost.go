@@ -15,7 +15,6 @@ type State uint8
 
 const (
 	Chase State = iota
-	Scared
 	Dead
 	CScared
 )
@@ -35,6 +34,7 @@ func NewGhost(personality Personality) *Ghost {
 				Width:  1,
 				Height: 1,
 			},
+			Door:  true,
 			Speed: 3,
 		},
 		Personality: personality,

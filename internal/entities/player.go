@@ -4,7 +4,8 @@ import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Player struct {
 	Entity
-	Health uint8
+	Health    uint8
+	Powerfull bool
 }
 
 func NewPlayer() *Player {
@@ -16,8 +17,10 @@ func NewPlayer() *Player {
 				Width:  1,
 				Height: 1,
 			},
+			Door:  false,
 			Speed: 3.5,
 		},
-		Health: 5,
+		Health:    5,
+		Powerfull: false,
 	}
 }

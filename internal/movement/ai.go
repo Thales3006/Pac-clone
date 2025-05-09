@@ -31,11 +31,11 @@ func HandleAI(player *ent.Player, ghosts []*ent.Ghost, l *level.Level) {
 				ghost.State = ent.CScared
 			}
 			if ghost.State == ent.CScared {
-				dir = direction(g, rl.Vector2{X: 8, Y: 9}, l)
+				dir = direction(g, rl.Vector2{X: float32(l.SpawnGhost[1]), Y: float32(l.SpawnGhost[0])}, l)
 			} else {
 				dir = direction(g, p, l)
 			}
-			if distance(g, rl.Vector2{X: 8, Y: 9}) < 3 {
+			if distance(g, rl.Vector2{X: float32(l.SpawnGhost[1]), Y: float32(l.SpawnGhost[0])}) < 3 {
 				ghost.State = ent.Chase
 			}
 		}

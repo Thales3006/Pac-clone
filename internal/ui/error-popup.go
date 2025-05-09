@@ -10,7 +10,7 @@ func NewError(message string, onClose func()) *Error {
 			Title:   "Error",
 			Message: message,
 			OnClose: onClose,
-			Options: []Pair{
+			Options: []*Pair{
 				{
 					Button:  "Ok",
 					OnClick: onClose,

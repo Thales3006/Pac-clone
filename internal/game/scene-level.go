@@ -20,15 +20,16 @@ var (
 func (g *Game) HandleLevel() {
 	rl.ClearBackground(rl.RayWhite)
 
-	if g.Level.Current == "" {
-		if err := g.Level.Load("level1.json"); err != nil {
-			ui.NewError(err.Error(), func() { g.currentScene = MainMenu }).
-				Use(g.center(400, 200))
-		}
+	g.Draw(g.center(800, 800), true)
+
+	if g.Level.Points == 0 {
+		ui.NewPopup("Congratulations!", "You Won \nthe Level!",
+			func() { g.currentScene = SelectionMenu },
+			[]*ui.Pair{
+				{Button: "Select other Level", OnClick: func() { g.currentScene = SelectionMenu }},
+			}).Use(g.center(400, 200))
 		return
 	}
-
-	g.Draw(g.center(800, 800), true)
 
 	deltaTime := rl.GetFrameTime()
 	mv.HandleInput(g.Control, g.Player, g.Level)
@@ -47,12 +48,32 @@ func (g *Game) HandleLevel() {
 }
 
 func (g *Game) loadLevel() {
+
+	if g.Level.Current == "" {
+		ui.NewError("Level was not found", func() { g.currentScene = MainMenu }).
+			Use(g.center(400, 200))
+		return
+	}
+
 	blinkyTex = rl.LoadTexture("assets/blinky.png")
 	pinkyTex = rl.LoadTexture("assets/pinky.png")
 	inkyTex = rl.LoadTexture("assets/inky.png")
 	clideTex = rl.LoadTexture("assets/clyde.png")
 
+	g.ResetPositions()
+
 	level_loaded = true
+}
+
+func (g *Game) unloadLevel() {
+	g.Level.Unload()
+
+	blinkyTex = rl.Texture2D{}
+	pinkyTex = rl.Texture2D{}
+	inkyTex = rl.Texture2D{}
+	clideTex = rl.Texture2D{}
+
+	level_loaded = false
 }
 
 func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
@@ -122,5 +143,15 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 			bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
 		)
 		rl.DrawTextureRec(*texture, srcRect, position, rl.White)
+	}
+}
+
+func (g *Game) ResetPositions() {
+	g.Player.X = float32(g.Level.SpawnPlayer[1])
+	g.Player.Y = float32(g.Level.SpawnPlayer[0])
+
+	for _, ghost := range g.Ghosts {
+		ghost.X = float32(g.Level.SpawnGhost[1])
+		ghost.Y = float32(g.Level.SpawnGhost[0])
 	}
 }
