@@ -15,6 +15,10 @@ var dirVectors = map[ent.Direction]rl.Vector2{
 	ent.Right: {X: 1, Y: 0},
 }
 
+func mod(a, m int32) int32 {
+	return (a%m + m) % m
+}
+
 func UpdateEntity(e *ent.Entity, l *level.Level, delta float32) {
 
 	dir := dirVectors[e.Direction]
