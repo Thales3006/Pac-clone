@@ -109,7 +109,7 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 			texture = &pinkyTex
 		case entities.Inky:
 			texture = &inkyTex
-		case entities.Clide:
+		case entities.Clyde:
 			texture = &clideTex
 		}
 

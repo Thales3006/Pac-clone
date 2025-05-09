@@ -26,7 +26,7 @@ func HandleAI(player *ent.Player, ghosts []*ent.Ghost, l *level.Level) {
 			dir = direction(g, PinkyPredict(player, l), l)
 		case ent.Inky:
 			dir = direction(g, InkyMean(p, ghosts), l)
-		case ent.Clide:
+		case ent.Clyde:
 			if distance(g, p) < 3 {
 				ghost.State = ent.CScared
 			}

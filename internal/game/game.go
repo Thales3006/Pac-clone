@@ -29,7 +29,7 @@ func New() *Game {
 			ent.NewGhost(ent.Blinky),
 			ent.NewGhost(ent.Pinky),
 			ent.NewGhost(ent.Inky),
-			ent.NewGhost(ent.Clide),
+			ent.NewGhost(ent.Clyde),
 		},
 		currentScene:  MainMenu,
 		isRunning:     true,

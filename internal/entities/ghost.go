@@ -8,7 +8,7 @@ const (
 	Blinky Personality = iota
 	Pinky
 	Inky
-	Clide
+	Clyde
 )
 
 type State uint8
