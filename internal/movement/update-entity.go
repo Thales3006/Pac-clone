@@ -76,8 +76,8 @@ func closestCenter(e *ent.Entity, l *level.Level, delta float32) [2]int32 {
 	nextY := e.Y + d.Y*e.Speed*delta
 
 	return [2]int32{
-		mod(int32(nextX+0.5), l.Width),
-		mod(int32(nextY+0.5), l.Height),
+		int32(modf(nextX+0.5, float32(l.Width))),
+		int32(modf(nextY+0.5, float32(l.Height))),
 	}
 }
 
@@ -97,11 +97,11 @@ func canMove(e *ent.Entity, l *level.Level, dir ent.Direction, delta float32) bo
 
 	offset := dirVectors[dir]
 
-	nextX := mod(int32(e.X+offset.X*e.Speed*delta), l.Width)
-	nextY := mod(int32(e.Y+offset.Y*e.Speed*delta), l.Height)
+	nextX := int32(modf(e.X+offset.X*e.Speed*delta, float32(l.Width)))
+	nextY := int32(modf(e.Y+offset.Y*e.Speed*delta, float32(l.Height)))
 
-	nextXS := mod(int32(e.X+0.99+offset.X*e.Speed*delta), l.Width)
-	nextYS := mod(int32(e.Y+0.99+offset.Y*e.Speed*delta), l.Height)
+	nextXS := int32(modf(e.X+0.99+offset.X*e.Speed*delta, float32(l.Width)))
+	nextYS := int32(modf(e.Y+0.99+offset.Y*e.Speed*delta, float32(l.Height)))
 
 	return l.Grid[nextY][nextX] != level.Wall && l.Grid[nextYS][nextXS] != level.Wall
 
