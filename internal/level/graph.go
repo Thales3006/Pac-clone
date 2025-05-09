@@ -12,6 +12,10 @@ func posHash(c [2]int32) [2]int32 {
 	return c
 }
 
+func mod(a, m int32) int32 {
+	return (a%m + m) % m
+}
+
 func (l *Level) generateGraph() {
 	l.Graph = graph.New(posHash)
 	for i := range l.Grid {
@@ -28,18 +32,10 @@ func (l *Level) generateGraph() {
 			if cell == Wall {
 				continue
 			}
-			if _, err := l.Graph.Vertex([2]int32{int32(i), int32(j + 1)}); err == nil {
-				l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{int32(i), int32(j + 1)})
-			}
-			if _, err := l.Graph.Vertex([2]int32{int32(i), int32(j - 1)}); err == nil {
-				l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{int32(i), int32(j - 1)})
-			}
-			if _, err := l.Graph.Vertex([2]int32{int32(i + 1), int32(j)}); err == nil {
-				l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{int32(i + 1), int32(j)})
-			}
-			if _, err := l.Graph.Vertex([2]int32{int32(i - 1), int32(j)}); err == nil {
-				l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{int32(i - 1), int32(j)})
-			}
+			l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{int32(i), mod(int32(j+1), l.Width)})
+			l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{int32(i), mod(int32(j-1), l.Width)})
+			l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{mod(int32(i+1), l.Height), int32(j)})
+			l.Graph.AddEdge([2]int32{int32(i), int32(j)}, [2]int32{mod(int32(i-1), l.Height), int32(j)})
 		}
 	}
 

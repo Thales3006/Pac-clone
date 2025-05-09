@@ -13,10 +13,10 @@ func NewPlayer() *Player {
 			Rectangle: rl.Rectangle{
 				X:      1,
 				Y:      1,
-				Width:  0.5,
-				Height: 0.5,
+				Width:  1,
+				Height: 1,
 			},
-			Speed: 4,
+			Speed: 3.5,
 		},
 		Health: 5,
 	}

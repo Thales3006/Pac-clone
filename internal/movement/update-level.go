@@ -6,7 +6,8 @@ import (
 )
 
 func UpdateLevel(l *level.Level, e *ent.Entity) {
-	if l.Grid[int32(e.Y)][int32(e.X)] == level.Point || l.Grid[int32(e.Y+0.9)][int32(e.X+0.9)] == level.Point {
-		l.Grid[int32(e.Y)][int32(e.X)] = level.Empty
+	closest := closestCenter(e, l, 0)
+	if l.Grid[closest[1]][closest[0]] == level.Point {
+		l.Grid[closest[1]][closest[0]] = level.Empty
 	}
 }
