@@ -79,7 +79,7 @@ func (g *Game) PlotMainTheme() {
 	scale := float32(g.Height) / float32(mainTheme.Height)
 	rl.DrawTexturePro(mainTheme,
 		rl.Rectangle{X: 0, Y: 0, Width: float32(mainTheme.Width), Height: float32(mainTheme.Height)},
-		rl.Rectangle{X: 0, Y: 0, Width: float32(mainTheme.Width) * scale, Height: float32(mainTheme.Height) * scale},
+		rl.Rectangle{X: float32(g.Width)/2 - float32(mainTheme.Width)*scale/2, Y: 0, Width: float32(mainTheme.Width) * scale, Height: float32(mainTheme.Height) * scale},
 		rl.Vector2{X: 0, Y: 0},
 		0,
 		rl.White,

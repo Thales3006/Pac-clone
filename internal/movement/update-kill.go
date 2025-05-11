@@ -13,7 +13,7 @@ func UpdateKill(p *ent.Player, ghosts []*ent.Ghost, l *level.Level, delta float3
 				p.Score += 1000
 			} else {
 				p.IsDead = true
-				p.Score -= 500
+				p.Score -= 250
 			}
 		}
 	}

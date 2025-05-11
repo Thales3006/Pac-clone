@@ -59,9 +59,9 @@ func (g *Game) HandleEditor() {
 		},
 	}).
 		Use(rl.Rectangle{
-			X:      float32(g.Width) - 200,
+			X:      float32(g.Width) - 100,
 			Y:      float32(g.Height) - 100,
-			Width:  200,
+			Width:  100,
 			Height: 100,
 		})
 
