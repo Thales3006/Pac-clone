@@ -73,14 +73,14 @@ func HandleAI(player *ent.Player, ghosts []*ent.Ghost, l *level.Level) {
 }
 
 func direction(a rl.Vector2, b rl.Vector2, l *level.Level) ent.Direction {
-	path, _ := l.AStar([2]int32{int32(a.Y), int32(a.X)}, [2]int32{int32(b.Y), int32(b.X)})
+	path, _ := l.AStar([2]int32{int32(a.Y + 0.5), int32(a.X + 0.5)}, [2]int32{int32(b.Y + 0.5), int32(b.X + 0.5)})
 
-	next := [2]int32{int32(a.Y), int32(a.X)}
+	next := [2]int32{int32(a.Y + 0.5), int32(a.X + 0.5)}
 	if len(path) > 1 {
 		next = path[1]
 	}
 
-	dir := rl.Vector2{X: float32(next[1]) - float32(int32(a.X)), Y: float32(next[0]) - float32(int32(a.Y))}
+	dir := rl.Vector2{X: float32(next[1]) - float32(int32(a.X+0.5)), Y: float32(next[0]) - float32(int32(a.Y+0.5))}
 
 	switch dir {
 	case rl.Vector2{X: 1, Y: 0}:

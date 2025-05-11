@@ -26,10 +26,11 @@ var (
 		Vertical:   {X: 3, Y: 1},
 		None:       {X: 4, Y: 1},
 	}
-	tileTable = map[level.Cell][]rl.Vector2{
-		level.Wall:  {{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 3, Y: 0}, {X: 4, Y: 0}, {X: 5, Y: 0}, {X: 6, Y: 0}, {X: 7, Y: 0}, {X: 8, Y: 0}, {X: 9, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1}},
-		level.Point: {{X: 0, Y: 2}, {X: 1, Y: 2}, {X: 2, Y: 2}, {X: 9, Y: 1}},
-		level.Power: {{X: 3, Y: 2}},
+	tileTable = map[Pick][]rl.Vector2{
+		Wall:   {{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 3, Y: 0}, {X: 4, Y: 0}, {X: 5, Y: 0}, {X: 8, Y: 1}, {X: 6, Y: 0}, {X: 7, Y: 0}, {X: 8, Y: 0}, {X: 9, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1}, {X: 8, Y: 1}},
+		Point:  {{X: 0, Y: 2}, {X: 1, Y: 2}, {X: 2, Y: 2}, {X: 9, Y: 1}},
+		Power:  {{X: 3, Y: 2}},
+		Player: {{X: 3, Y: 2}, {X: 4, Y: 2}},
 	}
 	degree = map[entities.Direction]float32{
 		entities.Right: 0,
@@ -50,7 +51,9 @@ const (
 func (g *Game) HandleLevel() {
 	rl.ClearBackground(rl.RayWhite)
 
-	g.Draw(g.center(800, 800), true)
+	g.PlotMainTheme()
+
+	g.Draw(g.center(float32(g.Height-150), float32(g.Height-150)))
 
 	if g.Level.Points == 0 {
 		ui.NewPopup("Congratulations!", "You Won \nthe Level!",
@@ -153,7 +156,7 @@ func (g *Game) unloadLevel() {
 	level_loaded = false
 }
 
-func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
+func (g *Game) Draw(bounds rl.Rectangle) {
 	rl.DrawRectangleRec(bounds, rl.Black)
 
 	if !level_loaded {
@@ -174,7 +177,7 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 			cellRect.Y = bounds.Y + float32(i)*cellRect.Height
 			switch {
 			case cell == level.Wall:
-				DrawTile(tile, tileTable[level.Wall][mv.Mod(int32(i)+int32(j), int32(len(tileTable[level.Wall])))], cellRect)
+				DrawTile(tile, tileTable[Wall][mv.Mod(int32(i)+int32(j), int32(len(tileTable[Wall])))], cellRect)
 			case cell == level.Door:
 				rl.DrawRectangleRec(cellRect, rl.Gray)
 			default:
@@ -184,7 +187,7 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 
 			switch cell {
 			case level.Point:
-				DrawTile(tile, tileTable[level.Point][mv.Mod(int32(i)+int32(j), int32(len(tileTable[level.Point])))], rl.Rectangle{
+				DrawTile(tile, tileTable[Point][mv.Mod(int32(i)+int32(j), int32(len(tileTable[Point])))], rl.Rectangle{
 					X:      cellRect.X + (0.25+float32(math.Cos(rl.GetTime())/20))*cellRect.Width,
 					Y:      cellRect.Y + (0.25+float32(math.Sin(rl.GetTime())/20))*cellRect.Height,
 					Width:  0.5 * cellRect.Width,
@@ -203,14 +206,11 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 		}
 	}
 
-	if !drawEntities {
-		return
-	}
-	DrawTileRot(tile, rl.Vector2{X: 3, Y: 2}, rl.Rectangle{
+	DrawTileRot(tile, tileTable[Player][int(rl.GetTime()*4)%len(tileTable[Player])], rl.Rectangle{
 		X:      bounds.X + cellRect.Width*(g.Player.X+0.5),
 		Y:      bounds.Y + cellRect.Height*(g.Player.Y+0.5),
-		Width:  cellRect.Width,
-		Height: cellRect.Height,
+		Width:  cellRect.Width * g.Player.Width,
+		Height: cellRect.Width * g.Player.Height,
 	}, degree[g.Player.Direction])
 
 	for _, ghost := range g.Ghosts {

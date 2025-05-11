@@ -41,7 +41,7 @@ func New() *Game {
 }
 
 func (g *Game) Run() {
-	//rl.SetConfigFlags(rl.FlagWindowResizable)
+	rl.SetConfigFlags(rl.FlagWindowResizable)
 
 	rl.InitWindow(900, 900, "Pac-clone")
 	defer rl.CloseWindow()

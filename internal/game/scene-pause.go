@@ -12,6 +12,7 @@ func (g *Game) HandlePause() {
 	ui.NewComponent([]ui.Element{
 		&ui.Label{
 			Text: "Pause",
+			Size: 30,
 		},
 		&ui.Button{
 			Text: "Continue",
@@ -30,12 +31,6 @@ func (g *Game) HandlePause() {
 				if editor_loaded {
 					g.unloadEditor()
 				}
-			},
-		},
-		&ui.Button{
-			Text: "Settings",
-			OnClick: func() {
-				g.currentScene = Settings
 			},
 		},
 		&ui.Button{

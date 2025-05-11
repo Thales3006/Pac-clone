@@ -20,5 +20,5 @@ func UpdateKill(p *ent.Player, ghosts []*ent.Ghost, l *level.Level, delta float3
 }
 
 func colision(a *ent.Entity, b *ent.Entity) bool {
-	return a.X < b.X+1 && a.X+1 > b.X && a.Y < b.Y+1 && a.Y+1 > b.Y
+	return a.X < b.X+b.Width && a.X+a.Width > b.X && a.Y < b.Y+b.Height && a.Y+a.Height > b.Y
 }

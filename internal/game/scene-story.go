@@ -11,13 +11,24 @@ func (g *Game) HandleSettings() {
 
 	ui.NewComponent([]ui.Element{
 		&ui.Label{
-			Text: "Settings",
+			Text: "Story",
+			Size: 30,
 		},
 		&ui.Label{
-			Text: "Not much to see here, still a Work in Progress (WIP)",
+			Text: "Pac-man is trying to make his city a better place \n" +
+				"by cleaning the streets, but the ghosts \n" +
+				"don't want that to happen. \n" +
+				"Help Pac-man recycle all the trash.",
+			Size: 20,
+		},
+		&ui.Button{
+			Text: "Back",
+			OnClick: func() {
+				g.currentScene = MainMenu
+			},
 		},
 	}).
-		Use(g.center(300, 200))
+		Use(g.center(600, 300))
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
 		if g.Level.Current == "" {

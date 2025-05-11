@@ -35,13 +35,13 @@ func (g *Game) HandleEditor() {
 
 	if *editor_listView.ScrollIndex >= 0 && "levels/"+editor_file_names[*editor_listView.ScrollIndex] != g.Level.Current {
 		g.Level.Unload()
-		g.Level.Load("levels/" + editor_file_names[*editor_listView.ScrollIndex])
+		g.Level.Load("levels/custom/" + editor_file_names[*editor_listView.ScrollIndex])
 	}
 
 	g.handleEditing()
 
-	rl.DrawText(g.Level.Current, 150, 0, 30, rl.Black)
-	editor_listView.Use(rl.Rectangle{X: 0, Y: 0, Width: 100, Height: 400})
+	rl.DrawText(g.Level.Current, int32(float32(g.Width)*0.4), int32(float32(g.Height)*0.10), 30, rl.Black)
+	editor_listView.Use(rl.Rectangle{X: 0, Y: 0, Width: float32(g.Width) * 0.2, Height: float32(g.Height)})
 
 	ui.NewComponent([]ui.Element{
 		&ui.Button{
@@ -87,7 +87,7 @@ func (g *Game) HandleEditor() {
 }
 
 func (g *Game) loadEditor() {
-	files, err := os.ReadDir("levels")
+	files, err := os.ReadDir("levels/custom/")
 	if err != nil {
 		ui.NewError(err.Error(), func() { g.currentScene = MainMenu })
 		return
@@ -110,8 +110,10 @@ func (g *Game) unloadEditor() {
 }
 
 func (g *Game) handleEditing() {
-	bounds := g.center(600, 600)
-	g.Draw(bounds, true)
+	bounds := g.center(float32(g.Height)*0.8, float32(g.Height)*0.8)
+	bounds.X *= 1.4
+	bounds.Y *= 1.4
+	g.Draw(bounds)
 
 	cell := rl.Rectangle{
 		Width:  bounds.Width / float32(g.Level.Width),
@@ -134,7 +136,7 @@ func (g *Game) handleEditing() {
 	case Ghost:
 		currentText = "6: Ghosts Spawn"
 	}
-	rl.DrawText(currentText, int32(float32(g.Width)*0.2), int32(float32(g.Height)*0.1), 30, rl.Black)
+	rl.DrawText(currentText, int32(float32(g.Width)*0.4), int32(float32(g.Height)*0.05), 30, rl.Black)
 
 	if rl.IsMouseButtonDown(rl.MouseButtonLeft) {
 		pos := rl.GetMousePosition()

@@ -13,6 +13,7 @@ type Level struct {
 	Points      int32                           `json:"-"`
 	SpawnPlayer [2]int32                        `json:"SpawnPlayer"`
 	SpawnGhost  [2]int32                        `json:"SpawnGhost"`
+	Required    int32                           `json:"Required"`
 }
 
 type Cell int32

@@ -23,8 +23,8 @@ func NewPlayer() *Player {
 			Rectangle: rl.Rectangle{
 				X:      1,
 				Y:      1,
-				Width:  1,
-				Height: 1,
+				Width:  0.7,
+				Height: 0.7,
 			},
 			Door:  false,
 			Speed: 3.5,

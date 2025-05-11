@@ -40,8 +40,8 @@ func NewGhost(personality Personality) *Ghost {
 			Rectangle: rl.Rectangle{
 				X:      8,
 				Y:      9,
-				Width:  1,
-				Height: 1,
+				Width:  0.8,
+				Height: 0.8,
 			},
 			Door:  true,
 			Speed: 3,
