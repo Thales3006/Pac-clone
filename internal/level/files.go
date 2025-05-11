@@ -30,6 +30,16 @@ func (l *Level) Load(path string) error {
 	l.Height = int32(len(l.Grid))
 	l.Current = path
 
+	var counter int32 = 0
+	for i := range l.Grid {
+		for _, cell := range l.Grid[i] {
+			if cell == Point || cell == Power {
+				counter++
+			}
+		}
+	}
+	l.Points = counter
+
 	l.generateGraph()
 
 	return nil

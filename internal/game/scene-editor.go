@@ -8,11 +8,22 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
+type Pick int32
+
+const (
+	Wall Pick = iota
+	Point
+	Door
+	Power
+	Player
+	Ghost
+)
+
 var (
 	editor_loaded     bool = false
 	editor_listView   *ui.ListView
 	editor_file_names []string
-	editor_tool       level.Cell = level.Wall
+	editor_tool       Pick = Wall
 )
 
 func (g *Game) HandleEditor() {
@@ -56,11 +67,17 @@ func (g *Game) HandleEditor() {
 
 	switch rl.GetKeyPressed() {
 	case rl.KeyOne:
-		editor_tool = level.Wall
+		editor_tool = Wall
 	case rl.KeyTwo:
-		editor_tool = level.Point
+		editor_tool = Point
 	case rl.KeyThree:
-		editor_tool = level.Door
+		editor_tool = Door
+	case rl.KeyFour:
+		editor_tool = Power
+	case rl.KeyFive:
+		editor_tool = Player
+	case rl.KeySix:
+		editor_tool = Ghost
 
 	case rl.KeyEscape:
 		g.currentScene = MainMenu
@@ -72,7 +89,8 @@ func (g *Game) HandleEditor() {
 func (g *Game) loadEditor() {
 	files, err := os.ReadDir("levels")
 	if err != nil {
-
+		ui.NewError(err.Error(), func() { g.currentScene = MainMenu })
+		return
 	}
 
 	editor_file_names = []string{}
@@ -84,14 +102,39 @@ func (g *Game) loadEditor() {
 	editor_loaded = true
 }
 
+func (g *Game) unloadEditor() {
+	editor_file_names = []string{}
+	g.Level.Unload()
+	editor_listView = nil
+	editor_loaded = false
+}
+
 func (g *Game) handleEditing() {
 	bounds := g.center(600, 600)
-	g.Draw(bounds, false)
+	g.Draw(bounds, true)
 
 	cell := rl.Rectangle{
 		Width:  bounds.Width / float32(g.Level.Width),
 		Height: bounds.Height / float32(g.Level.Height),
 	}
+
+	var currentText string
+
+	switch editor_tool {
+	case Wall:
+		currentText = "1: Wall"
+	case Point:
+		currentText = "2: Point"
+	case Door:
+		currentText = "3: Door"
+	case Power:
+		currentText = "4: Power"
+	case Player:
+		currentText = "5: Player Spawn"
+	case Ghost:
+		currentText = "6: Ghosts Spawn"
+	}
+	rl.DrawText(currentText, int32(float32(g.Width)*0.2), int32(float32(g.Height)*0.1), 30, rl.Black)
 
 	if rl.IsMouseButtonDown(rl.MouseButtonLeft) {
 		pos := rl.GetMousePosition()
@@ -99,7 +142,24 @@ func (g *Game) handleEditing() {
 		pos.Y -= bounds.Y
 
 		if pos.X >= 0 && pos.Y >= 0 && pos.X < bounds.Width && pos.Y < bounds.Height {
-			g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] = editor_tool
+			switch editor_tool {
+			case Wall:
+				g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] = level.Wall
+			case Point:
+				g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] = level.Point
+			case Door:
+				g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] = level.Door
+			case Power:
+				g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] = level.Power
+			case Player:
+				if g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] != level.Wall {
+					g.Level.SpawnPlayer = [2]int32{int32(pos.Y / cell.Height), int32(pos.X / cell.Width)}
+				}
+			case Ghost:
+				if g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] != level.Wall {
+					g.Level.SpawnGhost = [2]int32{int32(pos.Y / cell.Height), int32(pos.X / cell.Width)}
+				}
+			}
 		}
 	} else if rl.IsMouseButtonDown(rl.MouseButtonRight) {
 		pos := rl.GetMousePosition()
@@ -110,5 +170,7 @@ func (g *Game) handleEditing() {
 			g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] = level.Empty
 		}
 	}
+
+	g.ResetPositions()
 
 }

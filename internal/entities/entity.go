@@ -17,4 +17,5 @@ type Entity struct {
 	Speed      float32
 	Direction  Direction
 	DesiredDir Direction
+	Door       bool
 }

@@ -103,6 +103,10 @@ func canMove(e *ent.Entity, l *level.Level, dir ent.Direction, delta float32) bo
 	nextXS := int32(modf(e.X+0.99+offset.X*e.Speed*delta, float32(l.Width)))
 	nextYS := int32(modf(e.Y+0.99+offset.Y*e.Speed*delta, float32(l.Height)))
 
-	return l.Grid[nextY][nextX] != level.Wall && l.Grid[nextYS][nextXS] != level.Wall
+	wall := l.Grid[nextY][nextX] != level.Wall && l.Grid[nextYS][nextXS] != level.Wall
+	if e.Door {
+		return wall
+	}
+	return wall && l.Grid[nextY][nextX] != level.Door && l.Grid[nextYS][nextXS] != level.Door
 
 }

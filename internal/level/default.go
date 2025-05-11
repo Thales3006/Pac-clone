@@ -27,4 +27,6 @@ func (l *Level) LoadDefault() {
 	l.Width = int32(len(l.Grid[0]))
 	l.Height = int32(len(l.Grid))
 	l.Current = "Default.json"
+	l.SpawnGhost = [2]int32{8, 9}
+	l.SpawnPlayer = [2]int32{1, 1}
 }

@@ -14,7 +14,16 @@ type Popup struct {
 	Title   string
 	Message string
 	OnClose func()
-	Options []Pair
+	Options []*Pair
+}
+
+func NewPopup(title string, message string, onClose func(), options []*Pair) *Popup {
+	return &Popup{
+		Title:   title,
+		Message: message,
+		OnClose: onClose,
+		Options: options,
+	}
 }
 
 func (p *Popup) Use(bounds rl.Rectangle) {

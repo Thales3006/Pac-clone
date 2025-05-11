@@ -23,7 +23,13 @@ func (g *Game) HandlePause() {
 			Text: "Main Menu",
 			OnClick: func() {
 				g.currentScene = MainMenu
-				g.Level.Unload()
+
+				if level_loaded {
+					g.unloadLevel()
+				}
+				if editor_loaded {
+					g.unloadEditor()
+				}
 			},
 		},
 		&ui.Button{

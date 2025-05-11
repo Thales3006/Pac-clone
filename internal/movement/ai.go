@@ -19,24 +19,47 @@ func HandleAI(player *ent.Player, ghosts []*ent.Ghost, l *level.Level) {
 		g := rl.Vector2{X: ghost.X, Y: ghost.Y}
 		p := rl.Vector2{X: player.X, Y: player.Y}
 
-		switch ghost.Personality {
-		case ent.Blinky:
-			dir = direction(g, p, l)
-		case ent.Pinky:
-			dir = direction(g, PinkyPredict(player, l), l)
-		case ent.Inky:
-			dir = direction(g, InkyMean(p, ghosts), l)
-		case ent.Clyde:
-			if distance(g, p) < 3 {
-				ghost.State = ent.CScared
-			}
-			if ghost.State == ent.CScared {
-				dir = direction(g, rl.Vector2{X: 8, Y: 9}, l)
-			} else {
-				dir = direction(g, p, l)
-			}
-			if distance(g, rl.Vector2{X: 8, Y: 9}) < 3 {
+		ghost.Speed = 3
+		switch {
+		case ghost.State == ent.Dead:
+			dir = direction(g, rl.Vector2{X: float32(l.SpawnGhost[1]), Y: float32(l.SpawnGhost[0])}, l)
+			if dir == ent.None {
 				ghost.State = ent.Chase
+				ghost.Door = false
+				ghost.Wait.Reset()
+			}
+		case ghost.State == ent.Scared:
+			dir = direction(g, l.FindFarthest(p), l)
+			ghost.Speed = 2
+			if player.Powerfull.Done() {
+				ghost.State = ent.Chase
+			}
+		case !ghost.Wait.Done():
+			dir = ent.None
+		default:
+			if !ghost.Door {
+				ghost.Door = true
+			}
+
+			switch ghost.Personality {
+			case ent.Blinky:
+				dir = direction(g, p, l)
+			case ent.Pinky:
+				dir = direction(g, PinkyPredict(player, l), l)
+			case ent.Inky:
+				dir = direction(g, InkyMean(p, ghosts), l)
+			case ent.Clyde:
+				if distance(g, p) < 4 {
+					ghost.State = ent.CScared
+				}
+				if ghost.State == ent.CScared {
+					dir = direction(g, rl.Vector2{X: float32(l.SpawnGhost[1]), Y: float32(l.SpawnGhost[0])}, l)
+				} else {
+					dir = direction(g, p, l)
+				}
+				if distance(g, rl.Vector2{X: float32(l.SpawnGhost[1]), Y: float32(l.SpawnGhost[0])}) < 3 {
+					ghost.State = ent.Chase
+				}
 			}
 		}
 
@@ -50,7 +73,7 @@ func HandleAI(player *ent.Player, ghosts []*ent.Ghost, l *level.Level) {
 }
 
 func direction(a rl.Vector2, b rl.Vector2, l *level.Level) ent.Direction {
-	path, _ := level.AStar(l.Graph, [2]int32{int32(a.Y), int32(a.X)}, [2]int32{int32(b.Y), int32(b.X)})
+	path, _ := l.AStar([2]int32{int32(a.Y), int32(a.X)}, [2]int32{int32(b.Y), int32(b.X)})
 
 	next := [2]int32{int32(a.Y), int32(a.X)}
 	if len(path) > 1 {

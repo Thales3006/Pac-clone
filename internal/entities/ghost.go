@@ -1,6 +1,11 @@
 package entities
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	"pac-clone/internal/utils"
+	"time"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
 
 type Personality uint8
 
@@ -15,18 +20,21 @@ type State uint8
 
 const (
 	Chase State = iota
-	Scared
 	Dead
 	CScared
+	Scared
 )
 
 type Ghost struct {
 	Entity
 	Personality Personality
 	State       State
+	Wait        utils.Timer
 }
 
 func NewGhost(personality Personality) *Ghost {
+	timer := *utils.NewTimer(2 * time.Second)
+	timer.Finish()
 	return &Ghost{
 		Entity: Entity{
 			Rectangle: rl.Rectangle{
@@ -35,8 +43,10 @@ func NewGhost(personality Personality) *Ghost {
 				Width:  1,
 				Height: 1,
 			},
+			Door:  true,
 			Speed: 3,
 		},
+		Wait:        timer,
 		Personality: personality,
 	}
 }
