@@ -1,6 +1,7 @@
 package game
 
 import (
+	"image/color"
 	"pac-clone/internal/ui"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -10,10 +11,11 @@ var (
 	loaded_MainMenu bool
 	mainTitle       rl.Texture2D
 	mainTheme       rl.Texture2D
+	backgroundColor color.RGBA = color.RGBA{167, 247, 253, 255}
 )
 
 func (g *Game) HandleMainMenu() {
-	rl.ClearBackground(rl.RayWhite)
+	rl.ClearBackground(backgroundColor)
 
 	if !loaded_MainMenu {
 		g.loadMainMenu()
@@ -38,7 +40,7 @@ func (g *Game) HandleMainMenu() {
 			Size: 30,
 		},
 		&ui.Button{
-			Text: "Play",
+			Text: "Jogar",
 			OnClick: func() {
 				g.currentScene = SelectionMenu
 			},
@@ -50,13 +52,13 @@ func (g *Game) HandleMainMenu() {
 			},
 		},
 		&ui.Button{
-			Text: "Story",
+			Text: "Contexto",
 			OnClick: func() {
 				g.currentScene = Settings
 			},
 		},
 		&ui.Button{
-			Text: "Exit",
+			Text: "Sair",
 			OnClick: func() {
 				g.isRunning = false
 			},

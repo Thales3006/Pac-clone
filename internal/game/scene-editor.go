@@ -27,13 +27,13 @@ var (
 )
 
 func (g *Game) HandleEditor() {
-	rl.ClearBackground(rl.RayWhite)
+	rl.ClearBackground(backgroundColor)
 
 	if !editor_loaded {
 		g.loadEditor()
 	}
 
-	if *editor_listView.ScrollIndex >= 0 && "levels/"+editor_file_names[*editor_listView.ScrollIndex] != g.Level.Current {
+	if *editor_listView.ScrollIndex >= 0 && len(editor_file_names) > 0 && "levels/"+editor_file_names[*editor_listView.ScrollIndex] != g.Level.Current {
 		g.Level.Unload()
 		g.Level.Load("levels/custom/" + editor_file_names[*editor_listView.ScrollIndex])
 	}
@@ -45,13 +45,13 @@ func (g *Game) HandleEditor() {
 
 	ui.NewComponent([]ui.Element{
 		&ui.Button{
-			Text: "Save",
+			Text: "Salvar",
 			OnClick: func() {
 				g.Level.Save(g.Level.Current)
 			},
 		},
 		&ui.Button{
-			Text: "New",
+			Text: "Novo",
 			OnClick: func() {
 				g.Level.CreateFile()
 				editor_loaded = false
@@ -124,17 +124,17 @@ func (g *Game) handleEditing() {
 
 	switch editor_tool {
 	case Wall:
-		currentText = "1: Wall"
+		currentText = "1: Obstáculo"
 	case Point:
-		currentText = "2: Point"
+		currentText = "2: Lixo"
 	case Door:
-		currentText = "3: Door"
+		currentText = "3: Porta"
 	case Power:
-		currentText = "4: Power"
+		currentText = "4: Poder"
 	case Player:
-		currentText = "5: Player Spawn"
+		currentText = "5: Nascimento do Jogador"
 	case Ghost:
-		currentText = "6: Ghosts Spawn"
+		currentText = "6: Casa dos Fantasmas"
 	}
 	rl.DrawText(currentText, int32(float32(g.Width)*0.4), int32(float32(g.Height)*0.05), 30, rl.Black)
 

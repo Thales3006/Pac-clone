@@ -7,22 +7,22 @@ import (
 )
 
 func (g *Game) HandleSettings() {
-	rl.ClearBackground(rl.RayWhite)
+	rl.ClearBackground(backgroundColor)
 
 	ui.NewComponent([]ui.Element{
 		&ui.Label{
-			Text: "Story",
+			Text: "Contexto",
 			Size: 30,
 		},
 		&ui.Label{
-			Text: "Pac-man is trying to make his city a better place \n" +
-				"by cleaning the streets, but the ghosts \n" +
-				"don't want that to happen. \n" +
-				"Help Pac-man recycle all the trash.",
+			Text: "Pac-man está tentando fazer a sua cidade\n" +
+				"um lugar melhor ajudando a limpar as ruas, porém\n" +
+				"os fantamas querem impedi-lo. \n" +
+				"Ajude o Pac-man reciclar todo o lixo da cidade",
 			Size: 20,
 		},
 		&ui.Button{
-			Text: "Back",
+			Text: "Voltar",
 			OnClick: func() {
 				g.currentScene = MainMenu
 			},

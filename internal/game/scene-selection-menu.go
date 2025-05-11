@@ -21,7 +21,7 @@ var (
 )
 
 func (g *Game) HandleSelectionMenu() {
-	rl.ClearBackground(rl.RayWhite)
+	rl.ClearBackground(backgroundColor)
 
 	if !selectionMenu_loaded {
 		g.loadSelectionMenu()
@@ -30,8 +30,21 @@ func (g *Game) HandleSelectionMenu() {
 	ui.NewComponent(levels).Use(g.center(300, 200))
 
 	ui.NewComponent([]ui.Element{
+		&ui.Label{
+			Text: "Níveis desbloqueados: " + strconv.Itoa(int(g.levelUnlocked)),
+			Size: 30,
+		},
+	}).
+		Use(rl.Rectangle{
+			X:      20,
+			Y:      20,
+			Width:  200,
+			Height: 100,
+		})
+
+	ui.NewComponent([]ui.Element{
 		&ui.Button{
-			Text: "Custom",
+			Text: "Customizados",
 			OnClick: func() {
 				custom = true
 				selectionMenu_loaded = false
@@ -70,7 +83,10 @@ func (g *Game) loadSelectionMenu() {
 			Text: strconv.Itoa(int(counter)),
 			OnClick: func() {
 				g.Level.Load(filename)
-				g.currentScene = Level
+				if g.levelUnlocked >= g.Level.Required {
+					g.currentScene = Level
+				}
+
 			},
 		})
 		counter++

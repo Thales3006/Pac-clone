@@ -49,37 +49,40 @@ const (
 )
 
 func (g *Game) HandleLevel() {
-	rl.ClearBackground(rl.RayWhite)
+	rl.ClearBackground(backgroundColor)
 
 	g.PlotMainTheme()
 
 	g.Draw(g.center(float32(g.Height-150), float32(g.Height-150)))
 
 	if g.Level.Points == 0 {
-		ui.NewPopup("Congratulations!", "You Won \nthe Level!",
+		ui.NewPopup("Parabéns!", "You Venceu!",
 			func() { g.currentScene = SelectionMenu },
 			[]*ui.Pair{{
-				Button: "Select other Level",
+				Button: "Selecione outro nível",
 				OnClick: func() {
 					g.currentScene = SelectionMenu
 					g.unloadLevel()
+					if g.Level.Required == g.levelUnlocked {
+						g.levelUnlocked++
+					}
 				}},
 			}).Use(g.center(400, 200))
 		return
 	}
 
 	if g.Player.Health == 0 {
-		ui.NewPopup("Sorry!", "You Lost",
+		ui.NewPopup("Desculpa!", "Você perdeu!",
 			func() { g.currentScene = SelectionMenu },
 			[]*ui.Pair{
 				{
-					Button: "Select other Level",
+					Button: "Selecione outro nível",
 					OnClick: func() {
 						g.currentScene = SelectionMenu
 						g.unloadLevel()
 					}},
 				{
-					Button: "Main Menu",
+					Button: "Menu Principal",
 					OnClick: func() {
 						g.currentScene = MainMenu
 						g.unloadLevel()
@@ -89,10 +92,10 @@ func (g *Game) HandleLevel() {
 	}
 
 	if !start.Done() {
-		rl.DrawText("Wait...", (g.Width-150)/2, 20, 30, rl.Gray)
+		rl.DrawText("Esperar...", (g.Width-150)/2, 20, 30, rl.Gray)
 		return
 	}
-	rl.DrawText("Play!", (g.Width-150)/2, 20, 30, rl.Green)
+	rl.DrawText("Jogar!", (g.Width-150)/2, 20, 30, rl.Green)
 
 	if g.Player.IsDead {
 		g.Player.IsDead = false
@@ -163,7 +166,7 @@ func (g *Game) Draw(bounds rl.Rectangle) {
 		g.loadLevel()
 	}
 
-	rl.DrawText("Score: "+strconv.Itoa(int(g.Player.Score)), 0, 0, 30, rl.Black)
+	rl.DrawText("Pontuação: "+strconv.Itoa(int(g.Player.Score)), 0, 0, 30, rl.Black)
 
 	cellRect := rl.Rectangle{
 		Width:  bounds.Width / float32(g.Level.Width),
