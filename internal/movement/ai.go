@@ -126,7 +126,7 @@ func PinkyPredict(p *ent.Player, l *level.Level) rl.Vector2 {
 	next := [2]int32{int32(dirVectors[p.Direction].Y), int32(dirVectors[p.Direction].X)}
 
 	for i := 0; i < 5; i++ {
-		if l.Grid[mod(coord[0]+next[0], l.Height)][mod(coord[1]+next[1], l.Width)] == level.Wall {
+		if l.Grid[Mod(coord[0]+next[0], l.Height)][Mod(coord[1]+next[1], l.Width)] == level.Wall {
 			break
 		}
 		next[0] += int32(dirVectors[p.Direction].Y)

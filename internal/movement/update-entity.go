@@ -15,11 +15,17 @@ var dirVectors = map[ent.Direction]rl.Vector2{
 	ent.Right: {X: 1, Y: 0},
 }
 
-func mod(a, m int32) int32 {
-	return (a%m + m) % m
+func Mod(a, m int32) int32 {
+	for a >= m {
+		a -= m
+	}
+	for a < 0 {
+		a += m
+	}
+	return a
 }
 
-func modf(a, m float32) float32 {
+func Modf(a, m float32) float32 {
 	for a >= m {
 		a -= m
 	}
@@ -51,8 +57,8 @@ func UpdateEntity(e *ent.Entity, l *level.Level, delta float32) {
 	dir := dirVectors[e.Direction]
 
 	if canMove(e, l, e.Direction, delta) {
-		e.X = modf(e.X+dir.X*e.Speed*delta, float32(l.Width))
-		e.Y = modf(e.Y+dir.Y*e.Speed*delta, float32(l.Height))
+		e.X = Modf(e.X+dir.X*e.Speed*delta, float32(l.Width))
+		e.Y = Modf(e.Y+dir.Y*e.Speed*delta, float32(l.Height))
 
 	} else {
 		closest := closestCenter(e, l, delta)
@@ -76,8 +82,8 @@ func closestCenter(e *ent.Entity, l *level.Level, delta float32) [2]int32 {
 	nextY := e.Y + d.Y*e.Speed*delta
 
 	return [2]int32{
-		int32(modf(nextX+0.5, float32(l.Width))),
-		int32(modf(nextY+0.5, float32(l.Height))),
+		int32(Modf(nextX+0.5, float32(l.Width))),
+		int32(Modf(nextY+0.5, float32(l.Height))),
 	}
 }
 
@@ -97,11 +103,11 @@ func canMove(e *ent.Entity, l *level.Level, dir ent.Direction, delta float32) bo
 
 	offset := dirVectors[dir]
 
-	nextX := int32(modf(e.X+offset.X*e.Speed*delta, float32(l.Width)))
-	nextY := int32(modf(e.Y+offset.Y*e.Speed*delta, float32(l.Height)))
+	nextX := int32(Modf(e.X+offset.X*e.Speed*delta, float32(l.Width)))
+	nextY := int32(Modf(e.Y+offset.Y*e.Speed*delta, float32(l.Height)))
 
-	nextXS := int32(modf(e.X+0.99+offset.X*e.Speed*delta, float32(l.Width)))
-	nextYS := int32(modf(e.Y+0.99+offset.Y*e.Speed*delta, float32(l.Height)))
+	nextXS := int32(Modf(e.X+0.99+offset.X*e.Speed*delta, float32(l.Width)))
+	nextYS := int32(Modf(e.Y+0.99+offset.Y*e.Speed*delta, float32(l.Height)))
 
 	wall := l.Grid[nextY][nextX] != level.Wall && l.Grid[nextYS][nextXS] != level.Wall
 	if e.Door {
