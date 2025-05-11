@@ -2,8 +2,9 @@ package game
 
 import (
 	"fmt"
-	"os"
 	"pac-clone/internal/ui"
+	"path/filepath"
+	"sort"
 	"strconv"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -42,21 +43,23 @@ func (g *Game) HandleSelectionMenu() {
 			Height: 100,
 		})
 
-	ui.NewComponent([]ui.Element{
-		&ui.Button{
-			Text: "Customizados",
-			OnClick: func() {
-				custom = true
-				selectionMenu_loaded = false
+	if !custom {
+		ui.NewComponent([]ui.Element{
+			&ui.Button{
+				Text: "Customizados",
+				OnClick: func() {
+					custom = true
+					selectionMenu_loaded = false
+				},
 			},
-		},
-	}).
-		Use(rl.Rectangle{
-			X:      float32(g.Width) - 200,
-			Y:      float32(g.Height) - 100,
-			Width:  200,
-			Height: 100,
-		})
+		}).
+			Use(rl.Rectangle{
+				X:      float32(g.Width) - 200,
+				Y:      float32(g.Height) - 100,
+				Width:  200,
+				Height: 100,
+			})
+	}
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = MainMenu
@@ -67,29 +70,48 @@ func (g *Game) HandleSelectionMenu() {
 
 func (g *Game) loadSelectionMenu() {
 	levels = []ui.Element{}
-	var counter int32 = 1
-	for {
+	var pattern string
 
-		var filename string
-		if !custom {
-			filename = fmt.Sprintf("%s%d%s", "levels/level", counter, ".json")
-		} else {
-			filename = fmt.Sprintf("%s%d%s", "levels/custom/level", counter, ".json")
-		}
-		if _, err := os.Stat(filename); os.IsNotExist(err) {
-			break
-		}
-		levels = append(levels, &ui.Button{
-			Text: strconv.Itoa(int(counter)),
-			OnClick: func() {
-				g.Level.Load(filename)
-				if g.levelUnlocked >= g.Level.Required {
-					g.currentScene = Level
-				}
-
-			},
-		})
-		counter++
+	if !custom {
+		pattern = "levels/*.json"
+	} else {
+		pattern = "levels/custom/*.json"
 	}
+
+	files, err := filepath.Glob(pattern)
+	if err != nil {
+		fmt.Println("Erro ao procurar arquivos JSON:", err)
+		return
+	}
+
+	sort.Strings(files)
+
+	for i, filename := range files {
+		index := i + 1
+		currentFilename := filename
+
+		if !custom {
+			levels = append(levels, &ui.Button{
+				Text: strconv.Itoa(index),
+				OnClick: func() {
+					g.Level.Load(currentFilename)
+					if g.levelUnlocked >= g.Level.Required {
+						g.currentScene = Level
+					}
+				},
+			})
+		} else {
+			levels = append(levels, &ui.Button{
+				Text: filepath.Base(filename),
+				OnClick: func() {
+					g.Level.Load(currentFilename)
+					if g.levelUnlocked >= g.Level.Required {
+						g.currentScene = Level
+					}
+				},
+			})
+		}
+	}
+
 	selectionMenu_loaded = true
 }

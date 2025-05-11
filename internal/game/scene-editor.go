@@ -33,7 +33,7 @@ func (g *Game) HandleEditor() {
 		g.loadEditor()
 	}
 
-	if *editor_listView.ScrollIndex >= 0 && len(editor_file_names) > 0 && "levels/"+editor_file_names[*editor_listView.ScrollIndex] != g.Level.Current {
+	if *editor_listView.ScrollIndex >= 0 && len(editor_file_names) > 0 && "levels/custom/"+editor_file_names[*editor_listView.ScrollIndex] != g.Level.Current {
 		g.Level.Unload()
 		g.Level.Load("levels/custom/" + editor_file_names[*editor_listView.ScrollIndex])
 	}
@@ -53,7 +53,7 @@ func (g *Game) HandleEditor() {
 		&ui.Button{
 			Text: "Novo",
 			OnClick: func() {
-				g.Level.CreateFile()
+				g.Level.CreateFile("levels/custom")
 				editor_loaded = false
 			},
 		},

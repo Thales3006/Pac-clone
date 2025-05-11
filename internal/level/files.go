@@ -69,8 +69,8 @@ func (l *Level) Save(path string) error {
 	return err
 }
 
-func (l *Level) CreateFile() {
-	filename, _ := createUniqueFile("levels/level.json")
+func (l *Level) CreateFile(folder string) {
+	filename, _ := createUniqueFile(folder + "/level.json")
 	l.LoadDefault()
 	l.Save(filename)
 }
