@@ -7,20 +7,21 @@ import (
 )
 
 func (g *Game) HandlePause() {
-	rl.ClearBackground(rl.RayWhite)
+	rl.ClearBackground(backgroundColor)
 
 	ui.NewComponent([]ui.Element{
 		&ui.Label{
-			Text: "Pause",
+			Text: "Pausado",
+			Size: 30,
 		},
 		&ui.Button{
-			Text: "Continue",
+			Text: "Continuar",
 			OnClick: func() {
 				g.currentScene = Level
 			},
 		},
 		&ui.Button{
-			Text: "Main Menu",
+			Text: "Menu Principal",
 			OnClick: func() {
 				g.currentScene = MainMenu
 
@@ -33,13 +34,7 @@ func (g *Game) HandlePause() {
 			},
 		},
 		&ui.Button{
-			Text: "Settings",
-			OnClick: func() {
-				g.currentScene = Settings
-			},
-		},
-		&ui.Button{
-			Text: "Exit",
+			Text: "Sair",
 			OnClick: func() {
 				g.isRunning = false
 			},

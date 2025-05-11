@@ -1,6 +1,7 @@
 package game
 
 import (
+	"image/color"
 	"math"
 	"pac-clone/internal/entities"
 	"pac-clone/internal/level"
@@ -14,69 +15,54 @@ import (
 )
 
 var (
-	level_loaded    bool = false
-	blinkyTex       rl.Texture2D
-	pinkyTex        rl.Texture2D
-	inkyTex         rl.Texture2D
-	clideTex        rl.Texture2D
-	tile            rl.Texture2D
-	start           *utils.Timer
-	tileTableStreet = map[Conection]rl.Vector2{
-		Horizontal: {X: 2, Y: 1},
-		Vertical:   {X: 3, Y: 1},
-		None:       {X: 4, Y: 1},
-	}
-	tileTable = map[level.Cell][]rl.Vector2{
-		level.Wall:  {{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 3, Y: 0}, {X: 4, Y: 0}, {X: 5, Y: 0}, {X: 6, Y: 0}, {X: 7, Y: 0}, {X: 8, Y: 0}, {X: 9, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1}},
-		level.Point: {{X: 0, Y: 2}, {X: 1, Y: 2}, {X: 2, Y: 2}, {X: 9, Y: 1}},
-		level.Power: {{X: 3, Y: 2}},
-	}
-	degree = map[entities.Direction]float32{
-		entities.Right: 0,
-		entities.Left:  180,
-		entities.Up:    270,
-		entities.Down:  90,
-	}
+	level_loaded bool = false
+	tile         rl.Texture2D
+	start        *utils.Timer
 )
 
-type Conection int32
+type Connection int32
 
 const (
-	None       Conection = 0
-	Horizontal Conection = iota
+	None       Connection = 0
+	Horizontal Connection = iota
 	Vertical
 )
 
 func (g *Game) HandleLevel() {
-	rl.ClearBackground(rl.RayWhite)
+	rl.ClearBackground(backgroundColor)
 
-	g.Draw(g.center(800, 800), true)
+	g.PlotMainTheme()
+
+	g.Draw(g.center(float32(g.Height-150), float32(g.Height-150)))
 
 	if g.Level.Points == 0 {
-		ui.NewPopup("Congratulations!", "You Won \nthe Level!",
+		ui.NewPopup("Parabéns!", "You Venceu!",
 			func() { g.currentScene = SelectionMenu },
 			[]*ui.Pair{{
-				Button: "Select other Level",
+				Button: "Selecione outro nível",
 				OnClick: func() {
 					g.currentScene = SelectionMenu
 					g.unloadLevel()
+					if g.Level.Required == g.levelUnlocked {
+						g.levelUnlocked++
+					}
 				}},
 			}).Use(g.center(400, 200))
 		return
 	}
 
 	if g.Player.Health == 0 {
-		ui.NewPopup("Sorry!", "You Lost",
+		ui.NewPopup("Desculpa!", "Você perdeu!",
 			func() { g.currentScene = SelectionMenu },
 			[]*ui.Pair{
 				{
-					Button: "Select other Level",
+					Button: "Selecione outro nível",
 					OnClick: func() {
 						g.currentScene = SelectionMenu
 						g.unloadLevel()
 					}},
 				{
-					Button: "Main Menu",
+					Button: "Menu Principal",
 					OnClick: func() {
 						g.currentScene = MainMenu
 						g.unloadLevel()
@@ -86,10 +72,10 @@ func (g *Game) HandleLevel() {
 	}
 
 	if !start.Done() {
-		rl.DrawText("Wait...", (g.Width-150)/2, 20, 30, rl.Gray)
+		rl.DrawText("Esperar...", (g.Width-150)/2, 20, 30, rl.Gray)
 		return
 	}
-	rl.DrawText("Play!", (g.Width-150)/2, 20, 30, rl.Green)
+	rl.DrawText("Jogar!", (g.Width-150)/2, 20, 30, rl.Green)
 
 	if g.Player.IsDead {
 		g.Player.IsDead = false
@@ -115,6 +101,7 @@ func (g *Game) HandleLevel() {
 	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = Pause
 	}
+
 }
 
 func (g *Game) loadLevel() {
@@ -125,10 +112,6 @@ func (g *Game) loadLevel() {
 		return
 	}
 
-	blinkyTex = rl.LoadTexture("assets/blinky.png")
-	pinkyTex = rl.LoadTexture("assets/pinky.png")
-	inkyTex = rl.LoadTexture("assets/inky.png")
-	clideTex = rl.LoadTexture("assets/clyde.png")
 	tile = rl.LoadTexture("assets/tilemap.png")
 
 	g.ResetPositions()
@@ -144,23 +127,18 @@ func (g *Game) loadLevel() {
 func (g *Game) unloadLevel() {
 	g.Level.Unload()
 
-	blinkyTex = rl.Texture2D{}
-	pinkyTex = rl.Texture2D{}
-	inkyTex = rl.Texture2D{}
-	clideTex = rl.Texture2D{}
-
 	g.Player.Direction = entities.None
 	level_loaded = false
 }
 
-func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
+func (g *Game) Draw(bounds rl.Rectangle) {
 	rl.DrawRectangleRec(bounds, rl.Black)
 
 	if !level_loaded {
 		g.loadLevel()
 	}
 
-	rl.DrawText("Score: "+strconv.Itoa(int(g.Player.Score)), 0, 0, 30, rl.Black)
+	rl.DrawText("Pontuação: "+strconv.Itoa(int(g.Player.Score)), 0, 0, 30, rl.Black)
 
 	cellRect := rl.Rectangle{
 		Width:  bounds.Width / float32(g.Level.Width),
@@ -174,7 +152,7 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 			cellRect.Y = bounds.Y + float32(i)*cellRect.Height
 			switch {
 			case cell == level.Wall:
-				DrawTile(tile, tileTable[level.Wall][mv.Mod(int32(i)+int32(j), int32(len(tileTable[level.Wall])))], cellRect)
+				DrawTile(tile, tileTable[Wall][mv.Mod(int32(i)+int32(j), int32(len(tileTable[Wall])))], cellRect)
 			case cell == level.Door:
 				rl.DrawRectangleRec(cellRect, rl.Gray)
 			default:
@@ -184,7 +162,7 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 
 			switch cell {
 			case level.Point:
-				DrawTile(tile, tileTable[level.Point][mv.Mod(int32(i)+int32(j), int32(len(tileTable[level.Point])))], rl.Rectangle{
+				DrawTile(tile, tileTable[Point][mv.Mod(int32(i)+int32(j), int32(len(tileTable[Point])))], rl.Rectangle{
 					X:      cellRect.X + (0.25+float32(math.Cos(rl.GetTime())/20))*cellRect.Width,
 					Y:      cellRect.Y + (0.25+float32(math.Sin(rl.GetTime())/20))*cellRect.Height,
 					Width:  0.5 * cellRect.Width,
@@ -192,72 +170,64 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 				})
 
 			case level.Power:
-				rl.DrawRectangle(
-					int32(cellRect.X+0.2*cellRect.Width),
-					int32(cellRect.Y+0.2*cellRect.Height),
-					int32(0.5*cellRect.Width),
-					int32(0.5*cellRect.Height),
-					rl.Orange)
+				DrawTile(tile, rl.Vector2{X: 9, Y: 2}, rl.Rectangle{
+					X:      cellRect.X + (float32(math.Cos(rl.GetTime())/20))*cellRect.Width,
+					Y:      cellRect.Y + (float32(math.Sin(rl.GetTime())/20))*cellRect.Height,
+					Width:  cellRect.Width,
+					Height: cellRect.Height,
+				})
 			}
 
 		}
+
 	}
 
-	if !drawEntities {
-		return
-	}
-	DrawTileRot(tile, rl.Vector2{X: 3, Y: 2}, rl.Rectangle{
+	DrawTileRot(tile, tileTable[Player][int(rl.GetTime()*4)%len(tileTable[Player])], rl.Rectangle{
 		X:      bounds.X + cellRect.Width*(g.Player.X+0.5),
 		Y:      bounds.Y + cellRect.Height*(g.Player.Y+0.5),
-		Width:  cellRect.Width,
-		Height: cellRect.Height,
+		Width:  cellRect.Width * g.Player.Width,
+		Height: cellRect.Width * g.Player.Height,
 	}, degree[g.Player.Direction])
 
 	for _, ghost := range g.Ghosts {
-
-		if ghost.State == entities.Dead {
-			rl.DrawRectangleRec(rl.Rectangle{
+		pos := tileGhost[ghost.Personality][ghost.State][ghost.Direction]
+		DrawTile(tile, pos[int(rl.GetTime()*20)%len(pos)],
+			rl.Rectangle{
 				X:      bounds.X + cellRect.Width*(ghost.X+(1-ghost.Width)/2),
 				Y:      bounds.Y + cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
-				Width:  cellRect.Width * ghost.Width,
-				Height: cellRect.Height * ghost.Height,
-			},
-				rl.White)
-			continue
-		}
-
-		if ghost.State == entities.Scared {
-			rl.DrawRectangleRec(rl.Rectangle{
-				X:      bounds.X + cellRect.Width*(ghost.X+(1-ghost.Width)/2),
-				Y:      bounds.Y + cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
-				Width:  cellRect.Width * ghost.Width,
-				Height: cellRect.Height * ghost.Height,
-			},
-				rl.DarkBlue)
-			continue
-		}
-
-		texture := &rl.Texture2D{}
-		switch ghost.Personality {
-		case entities.Blinky:
-			texture = &blinkyTex
-		case entities.Pinky:
-			texture = &pinkyTex
-		case entities.Inky:
-			texture = &inkyTex
-		case entities.Clyde:
-			texture = &clideTex
-		}
-
-		srcRect := rl.NewRectangle(0, 0, float32(cellRect.Width*ghost.Width), float32(cellRect.Height*ghost.Height))
-		position := rl.NewVector2(
-			bounds.X+cellRect.Width*(ghost.X+(1-ghost.Width)/2),
-			bounds.Y+cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
-		)
-		texture.Width = int32(cellRect.Width * ghost.Width)
-		texture.Height = int32(cellRect.Height * ghost.Height)
-		rl.DrawTextureRec(*texture, srcRect, position, rl.White)
+				Width:  float32(cellRect.Width * ghost.Width),
+				Height: float32(cellRect.Height * ghost.Height),
+			})
 	}
+
+	borderColor := color.RGBA{19, 74, 39, 255}
+	rl.DrawRectangleRec(rl.Rectangle{
+		X:      bounds.X - cellRect.Width,
+		Y:      bounds.Y,
+		Width:  cellRect.Width,
+		Height: bounds.Height + cellRect.Height,
+	}, borderColor)
+
+	rl.DrawRectangleRec(rl.Rectangle{
+		X:      bounds.X + bounds.Width,
+		Y:      bounds.Y,
+		Width:  cellRect.Width,
+		Height: bounds.Height + cellRect.Height,
+	}, borderColor)
+
+	rl.DrawRectangleRec(rl.Rectangle{
+		X:      bounds.X - cellRect.Width,
+		Y:      bounds.Y - cellRect.Height,
+		Width:  bounds.Width + cellRect.Width*2,
+		Height: cellRect.Height,
+	}, borderColor)
+
+	rl.DrawRectangleRec(rl.Rectangle{
+		X:      bounds.X,
+		Y:      bounds.Y + bounds.Height,
+		Width:  bounds.Width,
+		Height: cellRect.Height,
+	}, borderColor)
 }
 
 func (g *Game) ResetPositions() {
@@ -293,7 +263,7 @@ func DrawTileRot(tileTexture rl.Texture2D, pos rl.Vector2, bounds rl.Rectangle, 
 	rl.DrawTexturePro(tileTexture, source, bounds, rl.Vector2{X: bounds.Width * 0.5, Y: bounds.Height * 0.5}, degree, rl.White)
 }
 
-func getConection(l *level.Level, i, j int32) Conection {
+func getConection(l *level.Level, i, j int32) Connection {
 	conection := None
 	if c := l.Grid[mv.Mod(i-1, l.Height)][j]; c != level.Wall && c != level.Door {
 		conection = Vertical
