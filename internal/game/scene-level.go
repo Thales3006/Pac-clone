@@ -5,6 +5,9 @@ import (
 	"pac-clone/internal/level"
 	mv "pac-clone/internal/movement"
 	"pac-clone/internal/ui"
+	"pac-clone/internal/utils"
+	"strconv"
+	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -15,6 +18,7 @@ var (
 	pinkyTex     rl.Texture2D
 	inkyTex      rl.Texture2D
 	clideTex     rl.Texture2D
+	start        *utils.Timer
 )
 
 func (g *Game) HandleLevel() {
@@ -25,10 +29,49 @@ func (g *Game) HandleLevel() {
 	if g.Level.Points == 0 {
 		ui.NewPopup("Congratulations!", "You Won \nthe Level!",
 			func() { g.currentScene = SelectionMenu },
-			[]*ui.Pair{
-				{Button: "Select other Level", OnClick: func() { g.currentScene = SelectionMenu }},
+			[]*ui.Pair{{
+				Button: "Select other Level",
+				OnClick: func() {
+					g.currentScene = SelectionMenu
+					g.unloadLevel()
+				}},
 			}).Use(g.center(400, 200))
 		return
+	}
+
+	if g.Player.Health == 0 {
+		ui.NewPopup("Sorry!", "You Lost",
+			func() { g.currentScene = SelectionMenu },
+			[]*ui.Pair{
+				{
+					Button: "Select other Level",
+					OnClick: func() {
+						g.currentScene = SelectionMenu
+						g.unloadLevel()
+					}},
+				{
+					Button: "Main Menu",
+					OnClick: func() {
+						g.currentScene = MainMenu
+						g.unloadLevel()
+					}},
+			}).Use(g.center(400, 200))
+		return
+	}
+
+	if !start.Done() {
+		rl.DrawText("Wait...", (g.Width-150)/2, 20, 30, rl.Gray)
+		return
+	}
+	rl.DrawText("Play!", (g.Width-150)/2, 20, 30, rl.Green)
+
+	if g.Player.IsDead {
+		g.Player.IsDead = false
+		g.Player.Health--
+
+		g.ResetPositions()
+
+		start.Reset()
 	}
 
 	deltaTime := rl.GetFrameTime()
@@ -39,8 +82,9 @@ func (g *Game) HandleLevel() {
 	for _, ghost := range g.Ghosts {
 		mv.UpdateEntity(&ghost.Entity, g.Level, deltaTime)
 	}
+	mv.UpdateKill(g.Player, g.Ghosts, g.Level, deltaTime)
 
-	mv.UpdateLevel(g.Level, &g.Player.Entity)
+	mv.UpdateLevel(g.Level, g.Player, g.Ghosts)
 
 	if rl.IsKeyPressed(rl.KeyEscape) {
 		g.currentScene = Pause
@@ -61,8 +105,12 @@ func (g *Game) loadLevel() {
 	clideTex = rl.LoadTexture("assets/clyde.png")
 
 	g.ResetPositions()
+	g.Player.Direction = entities.None
+	g.Player.Health = 5
+	g.Player.IsDead = false
 
 	level_loaded = true
+	start = utils.NewTimer(1 * time.Second)
 }
 
 func (g *Game) unloadLevel() {
@@ -73,6 +121,7 @@ func (g *Game) unloadLevel() {
 	inkyTex = rl.Texture2D{}
 	clideTex = rl.Texture2D{}
 
+	g.Player.Direction = entities.None
 	level_loaded = false
 }
 
@@ -82,6 +131,8 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 	if !level_loaded {
 		g.loadLevel()
 	}
+
+	rl.DrawText("Score: "+strconv.Itoa(int(g.Player.Score)), 0, 0, 30, rl.Black)
 
 	cellRect := rl.Rectangle{
 		Width:  bounds.Width / float32(g.Level.Width),
@@ -105,6 +156,13 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 					int32(0.3*cellRect.Width),
 					int32(0.3*cellRect.Height),
 					rl.White)
+			case level.Power:
+				rl.DrawRectangle(
+					int32(cellRect.X+0.2*cellRect.Width),
+					int32(cellRect.Y+0.2*cellRect.Height),
+					int32(0.5*cellRect.Width),
+					int32(0.5*cellRect.Height),
+					rl.Orange)
 			}
 		}
 	}
@@ -122,6 +180,29 @@ func (g *Game) Draw(bounds rl.Rectangle, drawEntities bool) {
 		rl.Yellow)
 
 	for _, ghost := range g.Ghosts {
+
+		if ghost.State == entities.Dead {
+			rl.DrawRectangleRec(rl.Rectangle{
+				X:      bounds.X + cellRect.Width*(ghost.X+(1-ghost.Width)/2),
+				Y:      bounds.Y + cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
+				Width:  cellRect.Width * ghost.Width,
+				Height: cellRect.Height * ghost.Height,
+			},
+				rl.White)
+			continue
+		}
+
+		if ghost.State == entities.Scared {
+			rl.DrawRectangleRec(rl.Rectangle{
+				X:      bounds.X + cellRect.Width*(ghost.X+(1-ghost.Width)/2),
+				Y:      bounds.Y + cellRect.Height*(ghost.Y+(1-ghost.Height)/2),
+				Width:  cellRect.Width * ghost.Width,
+				Height: cellRect.Height * ghost.Height,
+			},
+				rl.DarkBlue)
+			continue
+		}
+
 		texture := &rl.Texture2D{}
 		switch ghost.Personality {
 		case entities.Blinky:

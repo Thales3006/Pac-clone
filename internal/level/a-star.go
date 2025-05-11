@@ -4,8 +4,6 @@ import (
 	"container/heap"
 	"errors"
 	"math"
-
-	"github.com/dominikbraun/graph"
 )
 
 type PriorityQueueItem struct {
@@ -48,7 +46,7 @@ func heuristic(a, b [2]int32) float64 {
 	return math.Abs(float64(a[0])-float64(b[0])) + math.Abs(float64(a[1])-float64(b[1]))
 }
 
-func AStar(g graph.Graph[[2]int32, [2]int32], start, goal [2]int32) ([][2]int32, error) {
+func (l *Level) AStar(start, goal [2]int32) ([][2]int32, error) {
 	openSet := &PriorityQueue{}
 	heap.Init(openSet)
 	heap.Push(openSet, &PriorityQueueItem{Cell: start, Priority: 0})
@@ -57,9 +55,9 @@ func AStar(g graph.Graph[[2]int32, [2]int32], start, goal [2]int32) ([][2]int32,
 	costSoFar := make(map[[2]int32]float64)
 	costSoFar[posHash(start)] = 0
 
-	adjMap, err := g.AdjacencyMap()
-	if err != nil {
-		return nil, errors.New("unable to get adjacency map")
+	if currentLevel != l.Current {
+		adjMap, _ = l.Graph.AdjacencyMap()
+		currentLevel = l.Current
 	}
 
 	for openSet.Len() > 0 {
@@ -77,7 +75,7 @@ func AStar(g graph.Graph[[2]int32, [2]int32], start, goal [2]int32) ([][2]int32,
 		neighborsMap := adjMap[posHash(current)]
 		for neighborHash := range neighborsMap {
 			newCost := costSoFar[posHash(current)] + 1
-			neighbor, _ := g.Vertex(neighborHash)
+			neighbor, _ := l.Graph.Vertex(neighborHash)
 
 			if oldCost, ok := costSoFar[neighborHash]; !ok || newCost < oldCost {
 				costSoFar[neighborHash] = newCost

@@ -1,14 +1,23 @@
 package entities
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	"pac-clone/internal/utils"
+	"time"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
 
 type Player struct {
 	Entity
 	Health    uint8
-	Powerfull bool
+	Powerfull utils.Timer
+	IsDead    bool
+	Score     int32
 }
 
 func NewPlayer() *Player {
+	powerfull := *utils.NewTimer(10 * time.Second)
+	powerfull.Finish()
 	return &Player{
 		Entity: Entity{
 			Rectangle: rl.Rectangle{
@@ -21,6 +30,7 @@ func NewPlayer() *Player {
 			Speed: 3.5,
 		},
 		Health:    5,
-		Powerfull: false,
+		Powerfull: powerfull,
+		IsDead:    false,
 	}
 }

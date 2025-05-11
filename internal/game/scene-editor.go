@@ -14,6 +14,7 @@ const (
 	Wall Pick = iota
 	Point
 	Door
+	Power
 	Player
 	Ghost
 )
@@ -72,8 +73,10 @@ func (g *Game) HandleEditor() {
 	case rl.KeyThree:
 		editor_tool = Door
 	case rl.KeyFour:
-		editor_tool = Player
+		editor_tool = Power
 	case rl.KeyFive:
+		editor_tool = Player
+	case rl.KeySix:
 		editor_tool = Ghost
 
 	case rl.KeyEscape:
@@ -124,10 +127,12 @@ func (g *Game) handleEditing() {
 		currentText = "2: Point"
 	case Door:
 		currentText = "3: Door"
+	case Power:
+		currentText = "4: Power"
 	case Player:
-		currentText = "4: Player Spawn"
+		currentText = "5: Player Spawn"
 	case Ghost:
-		currentText = "5: Ghosts Spawn"
+		currentText = "6: Ghosts Spawn"
 	}
 	rl.DrawText(currentText, int32(float32(g.Width)*0.2), int32(float32(g.Height)*0.1), 30, rl.Black)
 
@@ -144,6 +149,8 @@ func (g *Game) handleEditing() {
 				g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] = level.Point
 			case Door:
 				g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] = level.Door
+			case Power:
+				g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] = level.Power
 			case Player:
 				if g.Level.Grid[int32(pos.Y/cell.Height)][int32(pos.X/cell.Width)] != level.Wall {
 					g.Level.SpawnPlayer = [2]int32{int32(pos.Y / cell.Height), int32(pos.X / cell.Width)}
