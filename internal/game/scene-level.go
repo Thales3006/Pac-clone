@@ -17,6 +17,7 @@ import (
 var (
 	level_loaded bool = false
 	tile         rl.Texture2D
+	lesic        rl.Texture2D
 	start        *utils.Timer
 )
 
@@ -113,6 +114,7 @@ func (g *Game) loadLevel() {
 	}
 
 	tile = rl.LoadTexture("assets/tilemap.png")
+	lesic = rl.LoadTexture("assets/lesic.png")
 
 	g.ResetPositions()
 	g.Player.Direction = entities.None
@@ -178,9 +180,7 @@ func (g *Game) Draw(bounds rl.Rectangle) {
 					Height: cellRect.Height,
 				})
 			}
-
 		}
-
 	}
 
 	DrawTileRot(tile, tileTable[Player][int(rl.GetTime()*4)%len(tileTable[Player])], rl.Rectangle{
@@ -209,14 +209,14 @@ func (g *Game) Draw(bounds rl.Rectangle) {
 		X:      bounds.X - cellRect.Width,
 		Y:      bounds.Y,
 		Width:  cellRect.Width,
-		Height: bounds.Height + cellRect.Height,
+		Height: bounds.Height,
 	}, borderColor)
 
 	rl.DrawRectangleRec(rl.Rectangle{
 		X:      bounds.X + bounds.Width,
 		Y:      bounds.Y,
 		Width:  cellRect.Width,
-		Height: bounds.Height + cellRect.Height,
+		Height: bounds.Height,
 	}, borderColor)
 
 	rl.DrawRectangleRec(rl.Rectangle{
@@ -227,11 +227,34 @@ func (g *Game) Draw(bounds rl.Rectangle) {
 	}, borderColor)
 
 	rl.DrawRectangleRec(rl.Rectangle{
-		X:      bounds.X,
+		X:      bounds.X - cellRect.Width,
 		Y:      bounds.Y + bounds.Height,
-		Width:  bounds.Width,
-		Height: cellRect.Height,
+		Width:  bounds.Width + cellRect.Width*2,
+		Height: cellRect.Height * 1.5,
 	}, borderColor)
+
+	rl.DrawRectangleRec(rl.Rectangle{
+		X:      bounds.X + float32(g.Level.Width-3)*cellRect.Width,
+		Y:      bounds.Y + float32(g.Level.Height)*cellRect.Height,
+		Width:  3 * cellRect.Width,
+		Height: 1.5 * cellRect.Height,
+	},
+		color.RGBA{44, 201, 60, 255},
+	)
+
+	rl.DrawTexturePro(lesic,
+		rl.Rectangle{X: 0, Y: 0, Width: float32(lesic.Width), Height: float32(lesic.Height)},
+		rl.Rectangle{
+			X:      bounds.X + float32(g.Level.Width-3)*cellRect.Width,
+			Y:      bounds.Y + float32(g.Level.Height)*cellRect.Height,
+			Width:  3 * cellRect.Width,
+			Height: 1.5 * cellRect.Height,
+		},
+		rl.Vector2{X: 0, Y: 0},
+		0,
+		rl.White,
+	)
+
 }
 
 func (g *Game) ResetPositions() {
