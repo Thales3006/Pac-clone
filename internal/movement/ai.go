@@ -29,7 +29,11 @@ func HandleAI(player *ent.Player, ghosts []*ent.Ghost, l *level.Level) {
 				ghost.Wait.Reset()
 			}
 		case ghost.State == ent.Scared:
-			dir = direction(g, l.FindFarthest(p), l)
+			if ghost.Personality != ent.Clyde {
+				dir = direction(g, l.FindFarthest(p), l)
+			} else {
+				dir = directionGreedy(g, l.FindFarthest(p), l)
+			}
 			ghost.Speed = 2
 			if player.Powerfull.Done() {
 				ghost.State = ent.Chase
@@ -53,9 +57,9 @@ func HandleAI(player *ent.Player, ghosts []*ent.Ghost, l *level.Level) {
 					ghost.State = ent.CScared
 				}
 				if ghost.State == ent.CScared {
-					dir = direction(g, rl.Vector2{X: float32(l.SpawnGhost[1]), Y: float32(l.SpawnGhost[0])}, l)
+					dir = directionGreedy(g, rl.Vector2{X: float32(l.SpawnGhost[1]), Y: float32(l.SpawnGhost[0])}, l)
 				} else {
-					dir = direction(g, p, l)
+					dir = directionGreedy(g, p, l)
 				}
 				if distance(g, rl.Vector2{X: float32(l.SpawnGhost[1]), Y: float32(l.SpawnGhost[0])}) < 3 {
 					ghost.State = ent.Chase
@@ -74,6 +78,30 @@ func HandleAI(player *ent.Player, ghosts []*ent.Ghost, l *level.Level) {
 
 func direction(a rl.Vector2, b rl.Vector2, l *level.Level) ent.Direction {
 	path, _ := l.AStar([2]int32{int32(a.Y + 0.5), int32(a.X + 0.5)}, [2]int32{int32(b.Y + 0.5), int32(b.X + 0.5)})
+
+	next := [2]int32{int32(a.Y + 0.5), int32(a.X + 0.5)}
+	if len(path) > 1 {
+		next = path[1]
+	}
+
+	dir := rl.Vector2{X: float32(next[1]) - float32(int32(a.X+0.5)), Y: float32(next[0]) - float32(int32(a.Y+0.5))}
+
+	switch dir {
+	case rl.Vector2{X: 1, Y: 0}:
+		return ent.Right
+	case rl.Vector2{X: -1, Y: 0}:
+		return ent.Left
+	case rl.Vector2{X: 0, Y: 1}:
+		return ent.Down
+	case rl.Vector2{X: 0, Y: -1}:
+		return ent.Up
+	default:
+		return ent.None
+	}
+}
+
+func directionGreedy(a rl.Vector2, b rl.Vector2, l *level.Level) ent.Direction {
+	path, _ := l.GreedyBestFirstSearch([2]int32{int32(a.Y + 0.5), int32(a.X + 0.5)}, [2]int32{int32(b.Y + 0.5), int32(b.X + 0.5)})
 
 	next := [2]int32{int32(a.Y + 0.5), int32(a.X + 0.5)}
 	if len(path) > 1 {
