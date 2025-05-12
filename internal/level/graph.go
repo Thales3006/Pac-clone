@@ -1,11 +1,9 @@
 package level
 
 import (
-	"os"
 	"strconv"
 
 	"github.com/dominikbraun/graph"
-	"github.com/dominikbraun/graph/draw"
 )
 
 func posHash(c [2]int32) [2]int32 {
@@ -39,6 +37,6 @@ func (l *Level) generateGraph() {
 		}
 	}
 
-	file, _ := os.Create("./graph.gv")
-	_ = draw.DOT(l.Graph, file)
+	//file, _ := os.Create("./graph.gv")
+	//_ = draw.DOT(l.Graph, file)
 }

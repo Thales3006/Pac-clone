@@ -72,10 +72,10 @@ func (g *Game) HandleLevel() {
 	}
 
 	if !start.Done() {
-		rl.DrawText("Esperar...", (g.Width-150)/2, 20, 30, rl.Gray)
+		rl.DrawText("Esperar...", (g.Width-150)/2, 0, 30, rl.Gray)
 		return
 	}
-	rl.DrawText("Jogar!", (g.Width-150)/2, 20, 30, rl.Green)
+	rl.DrawText("Jogar!", (g.Width-150)/2, 0, 30, rl.Green)
 
 	if g.Player.IsDead {
 		g.Player.IsDead = false
@@ -139,6 +139,7 @@ func (g *Game) Draw(bounds rl.Rectangle) {
 	}
 
 	rl.DrawText("Pontuação: "+strconv.Itoa(int(g.Player.Score)), 0, 0, 30, rl.Black)
+	rl.DrawText("Vidas: "+strconv.Itoa(int(g.Player.Health)), 0, 40, 30, rl.Black)
 
 	cellRect := rl.Rectangle{
 		Width:  bounds.Width / float32(g.Level.Width),
@@ -191,6 +192,9 @@ func (g *Game) Draw(bounds rl.Rectangle) {
 
 	for _, ghost := range g.Ghosts {
 		pos := tileGhost[ghost.Personality][ghost.State][ghost.Direction]
+		if len(pos) == 0 {
+			continue
+		}
 		DrawTile(tile, pos[int(rl.GetTime()*20)%len(pos)],
 			rl.Rectangle{
 				X:      bounds.X + cellRect.Width*(ghost.X+(1-ghost.Width)/2),
