@@ -48,5 +48,5 @@ func (l *Level) GreedyBestFirstSearch(start, goal [2]int32) ([][2]int32, error) 
 		}
 	}
 
-	return nil, errors.New("did not found a path")
+	return nil, errors.New("did not find a path")
 }
