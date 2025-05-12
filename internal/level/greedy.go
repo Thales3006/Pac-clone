@@ -5,14 +5,13 @@ import (
 	"errors"
 )
 
-func (l *Level) AStar(start, goal [2]int32) ([][2]int32, error) {
+func (l *Level) GreedyBestFirstSearch(start, goal [2]int32) ([][2]int32, error) {
 	openSet := &PriorityQueue{}
 	heap.Init(openSet)
-	heap.Push(openSet, &PriorityQueueItem{Cell: start, Priority: 0})
+	heap.Push(openSet, &PriorityQueueItem{Cell: start, Priority: heuristic(start, goal)})
 
 	cameFrom := make(map[[2]int32][2]int32)
-	costSoFar := make(map[[2]int32]float64)
-	costSoFar[posHash(start)] = 0
+	visited := make(map[[2]int32]bool)
 
 	if currentLevel != l.Current {
 		adjMap, _ = l.Graph.AdjacencyMap()
@@ -31,17 +30,21 @@ func (l *Level) AStar(start, goal [2]int32) ([][2]int32, error) {
 			return path, nil
 		}
 
-		neighborsMap := adjMap[posHash(current)]
-		for neighborHash := range neighborsMap {
-			newCost := costSoFar[posHash(current)] + 1
+		if visited[posHash(current)] {
+			continue
+		}
+		visited[posHash(current)] = true
+
+		for neighborHash := range adjMap[posHash(current)] {
 			neighbor, _ := l.Graph.Vertex(neighborHash)
 
-			if oldCost, ok := costSoFar[neighborHash]; !ok || newCost < oldCost {
-				costSoFar[neighborHash] = newCost
-				priority := newCost + heuristic(neighbor, goal)
-				heap.Push(openSet, &PriorityQueueItem{Cell: neighbor, Priority: priority})
-				cameFrom[neighborHash] = current
+			if visited[neighborHash] {
+				continue
 			}
+
+			priority := heuristic(neighbor, goal)
+			heap.Push(openSet, &PriorityQueueItem{Cell: neighbor, Priority: priority})
+			cameFrom[neighborHash] = current
 		}
 	}
 
